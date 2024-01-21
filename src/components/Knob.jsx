@@ -1,6 +1,6 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
-export default function Knob() {
+export default function Knob(props) {
   const componentIsMounted = useRef(false);
 
   const knobRef = useRef();
@@ -28,7 +28,6 @@ export default function Knob() {
 
   function mountKnob() {
     knobRef.current.addEventListener("mousedown", (e) => {
-      center = e.pageY;
       mouseIsDown = true;
     });
 
@@ -36,17 +35,23 @@ export default function Knob() {
       mouseIsDown = false;
     });
 
+    knobRef.current.addEventListener("mouseleave", (e) => {
+      mouseIsDown = false;
+    })
+
     knobRef.current.addEventListener("dblclick", (e) => {
       mouseIsDown = false;
-      knobRef.current.style.transform = "rotate(0deg)";
+      knobRef.current.style.transform = "rotate(-150deg)";
       currentValueRef.current.innerHTML = "0";
     });
 
     knobRef.current.addEventListener("mousemove", (e) => {
       if (mouseIsDown) {
-        distance = clamp(center - e.pageY, 100, -100);
-        knobRef.current.style.transform = "rotate(" + distance * 1.35 + "deg)";
+        distance = clamp((e.pageY * 5), 22050, 0);
+        knobRef.current.style.transform = "rotate(" + distance * 1 + "deg)";
         currentValueRef.current.innerHTML = distance;
+        props.freq(distance);
+        // console.log(typeof distance)
       }
     });
   }

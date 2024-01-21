@@ -9,27 +9,22 @@ function DragDrop() {
     setFile(file);
   };
 
-  console.log(file);
+  // console.log(file?.name);
 
   return (
     <>
-    <div className="plugin-drag-drop">
-    <FileUploader
-      handleChange={handleChange}
-      name="file"
-      types={fileTypes}
-      multiple={false}
-      label="Upload your audio here!"
-      array={["wav", "aiff", "mp3"]}
-      maxSize={10}
-      onSizeError={(file) => console.log(file)}
-      //   children={
-      //     <div>
-      //       <p style={{ textAlign: "center" }}>this working?</p>
-      //     </div>
-      //   }
-    />
-    </div>
+      <div className="plugin-drag-drop">
+        <FileUploader
+          handleChange={handleChange}
+          name={file?.name}
+          types={fileTypes}
+          multiple={false}
+          label="Upload your audio here!"
+          array={["wav", "aiff", "mp3"]}
+          maxSize={10}
+          onSizeError={(file) => console.log(file)}
+        />
+      </div>
     </>
   );
 }
