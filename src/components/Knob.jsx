@@ -8,8 +8,9 @@ export default function Knob(props) {
   const currentValueRef = useRef();
 
   let center = 0;
-  let mouseIsDown = false;
   let distance;
+  let mouseIsDown = false;
+  let mouseIsMoving = false;
 
   useEffect(() => {
     componentIsMounted.current = true;
@@ -20,7 +21,7 @@ export default function Knob(props) {
     };
   }, []);
 
-  function clamp(value, max, min) {
+  function freqClamp(value, max, min) {
     if (value > max) return max;
     if (value < min) return min;
     return value;
@@ -28,6 +29,7 @@ export default function Knob(props) {
 
   function mountKnob() {
     knobRef.current.addEventListener("mousedown", (e) => {
+      center = e.pageY;
       mouseIsDown = true;
     });
 
@@ -35,24 +37,33 @@ export default function Knob(props) {
       mouseIsDown = false;
     });
 
-    knobRef.current.addEventListener("mouseleave", (e) => {
-      mouseIsDown = false;
-    })
-
-    knobRef.current.addEventListener("dblclick", (e) => {
-      mouseIsDown = false;
-      knobRef.current.style.transform = "rotate(-150deg)";
-      currentValueRef.current.innerHTML = "0";
+    knobRef.current.addEventListener("mouseenter", (e) => {
+      if (mouseIsDown) {
+        mouseIsMoving = true;
+      }
     });
 
     knobRef.current.addEventListener("mousemove", (e) => {
-      if (mouseIsDown) {
-        distance = clamp((e.pageY * 5), 22050, 0);
-        knobRef.current.style.transform = "rotate(" + distance * 1 + "deg)";
-        currentValueRef.current.innerHTML = distance;
-        props.freq(distance);
-        // console.log(typeof distance)
+      mouseIsMoving = true;
+      let divisor = 5;
+      let multiplier = 3;
+      if (mouseIsDown && mouseIsMoving) {
+        if (e.pageY < center) {
+          multiplier = 21;
+          divisor = 42;
+        }
+        distance = freqClamp((center - e.pageY) * multiplier, 7000, -800);
+        knobRef.current.style.transform =
+          "rotate(" + distance / divisor + "deg)";
+        currentValueRef.current.innerHTML = distance + 1000 + "Hz";
+        props.freq(distance + 1000);
       }
+    });
+
+    knobRef.current.addEventListener("dblclick", (e) => {
+      mouseIsDown = false;
+      knobRef.current.style.transform = "rotate(0deg)";
+      currentValueRef.current.innerHTML = "1000Hz";
     });
   }
 
@@ -60,16 +71,16 @@ export default function Knob(props) {
     <>
       <div className="wrapper">
         <div className="knob">
-          <div className="label label-l">Do Less</div>
+          <div className="label label-l">200 Hz</div>
           <div ref={knobRef} className="knob_inner">
             <div ref={pointerRef} className="knob_inner_pointer"></div>
           </div>
-          <div className="label label-r">Do More</div>
+          <div className="label label-r">8 KHz</div>
         </div>
         <div ref={currentValueRef} className="current-value">
-          0
+          1000Hz
         </div>
-        <div className="instructions">Double click to reset to 0</div>
+        <div className="instructions">Double click knob to reset</div>
       </div>
     </>
   );

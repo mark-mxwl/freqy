@@ -3,27 +3,42 @@ import Knob from "./components/Knob.jsx";
 import DragDrop from "./components/DragDrop.jsx";
 
 export default function App() {
-  
   // CREATE AUDIO CONTEXT & SOURCE
-  const cxt = new AudioContext();
+  const [ctx, setCtx] = useState(new AudioContext());
   const sample = new Audio("src/assets/audio/vox_stab_w_verb.wav");
-  const source = cxt.createMediaElementSource(sample);
-  cxt.onstatechange = () => console.log(cxt.state)
+  const source = ctx.createMediaElementSource(sample);
+  ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime);
+
+  useEffect(() => {
+    setCtx(new AudioContext());
+  }, []);
 
   // CREATE FILTER & SET PROPERTIES
-  const filter = cxt.createBiquadFilter();
-  const [freq, setFreq] = useState(7000)
-  filter.type = "notch"
-  filter.frequency.value = freq
-  console.log(filter.frequency.value)
+  const filter = ctx.createBiquadFilter();
+  const [freq, setFreq] = useState(1000);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  filter.type = "notch";
+  filter.frequency.value = freq;
+  // console.log(freq)
 
   // SET SIGNAL PATH: SOURCE -> FILTER -> OUTPUT
   source.connect(filter);
-  filter.connect(cxt.destination);
+  filter.connect(ctx.destination);
 
-  // TRIGGER SAMPLE
+  // SUSPEND AUDIO CONTEXT
+  function suspendContext() {
+    setIsPlaying(false);
+    ctx.suspend();
+  }
+
+  // TRIGGER AUDIO SAMPLE
   function playSound() {
-    sample.play();
+    ctx.resume();
+    setIsPlaying(true);
+    !isPlaying && sample.play();
+    const sampleDurationInMs = Number(sample.duration.toFixed(0) * 1000);
+    setTimeout(suspendContext, sampleDurationInMs);
   }
 
   return (
@@ -36,9 +51,7 @@ export default function App() {
             PREVIEW AUDIO
           </button>
         </div>
-        <Knob 
-          freq={setFreq}
-        />
+        <Knob freq={setFreq} />
       </div>
     </>
   );
