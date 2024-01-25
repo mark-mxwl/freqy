@@ -43,7 +43,7 @@ export default function Knob(props) {
       }
     });
 
-    knobRef.current.addEventListener("mousemove", (e) => {
+    document.body.addEventListener("mousemove", (e) => {
       mouseIsMoving = true;
       let divisor = 5;
       let multiplier = 3;

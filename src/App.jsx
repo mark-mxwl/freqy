@@ -2,51 +2,66 @@ import { useState, useEffect } from "react";
 import Knob from "./components/Knob.jsx";
 import DragDrop from "./components/DragDrop.jsx";
 
-// CREATE AUDIO CONTEXT, SOURCE, & FILTER
+// CREATE AUDIO CONTEXT & FILTER
 const ctx = new AudioContext();
-const sample = new Audio("src/assets/audio/vox_stab_w_verb.wav");
-const source = ctx.createMediaElementSource(sample);
 const filter = ctx.createBiquadFilter();
-
-// SET SIGNAL PATH: SOURCE -> FILTER -> OUTPUT
-source.connect(filter);
 filter.connect(ctx.destination);
 
+// const dropFX = new Audio("src/assets/audio/FL_nav_active_click.wav");
+// const fXsource = ctx.createMediaElementSource(dropFX);
+// fXsource.connect(ctx.destination);
+
 export default function App() {
-  ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime);
-
-  console.log("component re-rendered!");
-
-  // CREATE FILTER & SET PROPERTIES
+  ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
 
   const [freq, setFreq] = useState(1000);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [uploadedAudio, setUploadedAudio] = useState(null);
+  let bufferLength;
+  let playBufferedSample;
 
+  // SET FILTER PROPERTIES
   filter.type = "notch";
   filter.frequency.value = freq;
 
-  // SUSPEND AUDIO CONTEXT
-  function suspendContext() {
-    setIsPlaying(false);
-    ctx.suspend();
-  }
+  useEffect(() => {
+    if (uploadedAudio && !isPlaying) {
+      // DECODE UPLOADED AUDIO & CREATE BUFFER
+      var reader1 = new FileReader();
+      reader1.readAsArrayBuffer(uploadedAudio);
+      reader1.onload = function (ev) {
+        ctx.decodeAudioData(ev.target.result).then(function (buffer) {
+          var soundSource = ctx.createBufferSource();
+          soundSource.buffer = buffer;
+          soundSource.connect(filter);
+          playBufferedSample = () => soundSource.start();
+          bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
+        });
+      };
+    }
+  }, [playSample]);
 
-  // TRIGGER AUDIO SAMPLE
-  function playSound() {
+  // TRIGGER BUFFERED AUDIO
+  function playSample() {
     ctx.resume();
     setIsPlaying(true);
-    !isPlaying && sample.play();
-    const sampleDurationInMs = Number(sample.duration.toFixed(0) * 1000);
-    setTimeout(suspendContext, sampleDurationInMs);
+    playBufferedSample();
+    setTimeout(suspendContext, bufferLength);
+  }
+
+  // SUSPEND AUDIO CONTEXT
+  function suspendContext() {
+    ctx.suspend();
+    setIsPlaying(false);
   }
 
   return (
     <>
       <div className="plugin-container">
         <h1>NOTCHIE</h1>
-        <DragDrop />
+        <DragDrop uploadedAudio={setUploadedAudio} />
         <div className="plugin-drag-drop" style={{ marginTop: "25px" }}>
-          <button onClick={playSound} id="play-btn">
+          <button onClick={playSample} id="play-btn">
             PREVIEW AUDIO
           </button>
         </div>
