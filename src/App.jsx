@@ -2,29 +2,28 @@ import { useState, useEffect } from "react";
 import Knob from "./components/Knob.jsx";
 import DragDrop from "./components/DragDrop.jsx";
 
+// CREATE AUDIO CONTEXT, SOURCE, & FILTER
+const ctx = new AudioContext();
+const sample = new Audio("src/assets/audio/vox_stab_w_verb.wav");
+const source = ctx.createMediaElementSource(sample);
+const filter = ctx.createBiquadFilter();
+
+// SET SIGNAL PATH: SOURCE -> FILTER -> OUTPUT
+source.connect(filter);
+filter.connect(ctx.destination);
+
 export default function App() {
-  // CREATE AUDIO CONTEXT & SOURCE
-  const [ctx, setCtx] = useState(new AudioContext());
-  const sample = new Audio("src/assets/audio/vox_stab_w_verb.wav");
-  const source = ctx.createMediaElementSource(sample);
   ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime);
 
-  useEffect(() => {
-    setCtx(new AudioContext());
-  }, []);
+  console.log("component re-rendered!");
 
   // CREATE FILTER & SET PROPERTIES
-  const filter = ctx.createBiquadFilter();
+
   const [freq, setFreq] = useState(1000);
   const [isPlaying, setIsPlaying] = useState(false);
 
   filter.type = "notch";
   filter.frequency.value = freq;
-  // console.log(freq)
-
-  // SET SIGNAL PATH: SOURCE -> FILTER -> OUTPUT
-  source.connect(filter);
-  filter.connect(ctx.destination);
 
   // SUSPEND AUDIO CONTEXT
   function suspendContext() {
