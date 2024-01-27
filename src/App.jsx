@@ -7,9 +7,9 @@ const ctx = new AudioContext();
 const filter = ctx.createBiquadFilter();
 filter.connect(ctx.destination);
 
-// const dropFX = new Audio("src/assets/audio/FL_nav_active_click.wav");
-// const fXsource = ctx.createMediaElementSource(dropFX);
-// fXsource.connect(ctx.destination);
+let bufferLength;
+let playBufferedSample;
+let stopBufferedSample;
 
 export default function App() {
   ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
@@ -17,11 +17,10 @@ export default function App() {
   const [freq, setFreq] = useState(1000);
   const [isPlaying, setIsPlaying] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
-  let bufferLength;
-  let playBufferedSample;
-
+  
   // SET FILTER PROPERTIES
   filter.type = "notch";
+  filter.Q.value = 0.7;
   filter.frequency.value = freq;
 
   useEffect(() => {
@@ -35,18 +34,31 @@ export default function App() {
           soundSource.buffer = buffer;
           soundSource.connect(filter);
           playBufferedSample = () => soundSource.start();
+          stopBufferedSample = () => soundSource.stop();
           bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
+          console.log("buffer created!");
         });
       };
+      
     }
-  }, [playSample]);
+  }, [uploadedAudio, isPlaying]);
 
-  // TRIGGER BUFFERED AUDIO
+  // PLAY, STOP, & LOOP BUFFERED AUDIO
   function playSample() {
     ctx.resume();
     setIsPlaying(true);
     playBufferedSample();
     setTimeout(suspendContext, bufferLength);
+  }
+
+  function stopSample() {
+    stopBufferedSample();
+    setIsPlaying(false);
+    console.log("stopped");
+  }
+
+  function loopSample() {
+    console.log("looping");
   }
 
   // SUSPEND AUDIO CONTEXT
@@ -61,9 +73,26 @@ export default function App() {
         <h1>NOTCHIE</h1>
         <DragDrop uploadedAudio={setUploadedAudio} />
         <div className="plugin-drag-drop" style={{ marginTop: "25px" }}>
-          <button onClick={playSample} id="play-btn">
-            PREVIEW AUDIO
-          </button>
+          <div className="plugin-control-bar">
+            <div onClick={playSample} id="play-btn">
+              <img
+                src="src/assets/icon/play-solid.svg"
+                className="plugin-control-buttons"
+              />
+            </div>
+            <div onClick={stopSample} id="stop-btn">
+              <img
+                src="src/assets/icon/stop-solid.svg"
+                className="plugin-control-buttons"
+              />
+            </div>
+            <div onClick={loopSample} id="loop-btn">
+              <img
+                src="src/assets/icon/repeat-solid.svg"
+                className="plugin-control-buttons"
+              />
+            </div>
+          </div>
         </div>
         <Knob freq={setFreq} />
       </div>

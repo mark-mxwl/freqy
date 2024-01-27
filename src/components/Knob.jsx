@@ -72,15 +72,16 @@ export default function Knob(props) {
       <div className="wrapper">
         <div className="knob">
           <div className="label label-l">200 Hz</div>
-          <div ref={knobRef} className="knob_inner">
-            <div ref={pointerRef} className="knob_inner_pointer"></div>
+          <div className="knob_inner_shadow">
+            <div ref={knobRef} className="knob_inner" title="Double-click to reset!">
+              <div ref={pointerRef} className="knob_inner_pointer"></div>
+            </div>
           </div>
           <div className="label label-r">8 KHz</div>
         </div>
         <div ref={currentValueRef} className="current-value">
           1000Hz
         </div>
-        <div className="instructions">Double click knob to reset</div>
       </div>
     </>
   );
