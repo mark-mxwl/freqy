@@ -16,15 +16,16 @@ export default function App() {
 
   const [freq, setFreq] = useState(1000);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [toggle, setToggle] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
-  
+
   // SET FILTER PROPERTIES
   filter.type = "notch";
   filter.Q.value = 0.7;
   filter.frequency.value = freq;
 
   useEffect(() => {
-    if (uploadedAudio && !isPlaying) {
+    if (uploadedAudio) {
       // DECODE UPLOADED AUDIO & CREATE BUFFER
       var reader1 = new FileReader();
       reader1.readAsArrayBuffer(uploadedAudio);
@@ -36,12 +37,11 @@ export default function App() {
           playBufferedSample = () => soundSource.start();
           stopBufferedSample = () => soundSource.stop();
           bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
-          console.log("buffer created!");
         });
       };
-      
+      console.log("buffer created!");
     }
-  }, [uploadedAudio, isPlaying]);
+  }, [uploadedAudio, isPlaying, toggle]);
 
   // PLAY, STOP, & LOOP BUFFERED AUDIO
   function playSample() {
@@ -51,14 +51,22 @@ export default function App() {
     setTimeout(suspendContext, bufferLength);
   }
 
+  // Currently broken. Seems to be attempting to access incorrect audio node.
   function stopSample() {
     stopBufferedSample();
     setIsPlaying(false);
-    console.log("stopped");
   }
 
   function loopSample() {
-    console.log("looping");
+    ctx.resume();
+    setIsPlaying(true);
+    if (!isPlaying) {
+      playBufferedSample();
+      setInterval(() => {
+        setToggle((prev) => !prev);
+        playBufferedSample();
+      }, bufferLength);
+    }
   }
 
   // SUSPEND AUDIO CONTEXT
@@ -70,7 +78,7 @@ export default function App() {
   return (
     <>
       <div className="plugin-container">
-        <h1>NOTCHIE</h1>
+        <h1>Notchy</h1>
         <DragDrop uploadedAudio={setUploadedAudio} />
         <div className="plugin-drag-drop" style={{ marginTop: "25px" }}>
           <div className="plugin-control-bar">
@@ -95,6 +103,20 @@ export default function App() {
           </div>
         </div>
         <Knob freq={setFreq} />
+      </div>
+      <div className="copyright-and-links">
+        <p style={{marginLeft: '9px'}}>MIT 2024 © Mark Maxwell</p>
+        <div>
+          <a href="https://github.com/mark-mxwl" target="_blank">
+            <img src="src/assets/icon/github.svg" className="link-icons" />
+          </a>
+          <a href="https://markmaxwelldev.com" target="_blank">
+            <img
+              src="src/assets/icon/M_nav_icon_1.svg"
+              className="link-icons"
+            />
+          </a>
+        </div>
       </div>
     </>
   );

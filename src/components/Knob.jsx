@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 
 export default function Knob(props) {
   const componentIsMounted = useRef(false);
@@ -33,7 +33,7 @@ export default function Knob(props) {
       mouseIsDown = true;
     });
 
-    knobRef.current.addEventListener("mouseup", (e) => {
+    document.body.addEventListener("mouseup", (e) => {
       mouseIsDown = false;
     });
 
@@ -45,14 +45,14 @@ export default function Knob(props) {
 
     document.body.addEventListener("mousemove", (e) => {
       mouseIsMoving = true;
-      let divisor = 5;
-      let multiplier = 3;
+      let divisor = 5.5;
+      let multiplier = 6;
       if (mouseIsDown && mouseIsMoving) {
         if (e.pageY < center) {
-          multiplier = 21;
-          divisor = 42;
+          multiplier = 50;
+          divisor = 55;
         }
-        distance = freqClamp((center - e.pageY) * multiplier, 7000, -800);
+        distance = freqClamp((center - e.pageY) * multiplier, 9000, -900);
         knobRef.current.style.transform =
           "rotate(" + distance / divisor + "deg)";
         currentValueRef.current.innerHTML = distance + 1000 + "Hz";
@@ -71,13 +71,17 @@ export default function Knob(props) {
     <>
       <div className="wrapper">
         <div className="knob">
-          <div className="label label-l">200 Hz</div>
+          <div className="label label-l">100 Hz</div>
           <div className="knob_inner_shadow">
-            <div ref={knobRef} className="knob_inner" title="Double-click to reset!">
+            <div
+              ref={knobRef}
+              className="knob_inner"
+              title="Double-click to reset!"
+            >
               <div ref={pointerRef} className="knob_inner_pointer"></div>
             </div>
           </div>
-          <div className="label label-r">8 KHz</div>
+          <div className="label label-r">10 KHz</div>
         </div>
         <div ref={currentValueRef} className="current-value">
           1000Hz

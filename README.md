@@ -1,4 +1,4 @@
-# Notchie
+# Notchy
 
-A simple in-browser notch filter built with the Elementary Audio JS library. Accepts an audio file from the user, which is processed with a predefined freq. automation pattern. User can adjust the the amount of the effect while triggering/looping the audio preview. Output files are rendered in the same format as the input.
+Notchy is an in-browser notch filter built with the Web Audio API. The filter's audio buffer accepts an audio file of up to 10 MB in the following formats: wav, aiff, and mp3. The audio can then be triggered as a one-shot or loop, allowing the user to adjust the cutoff frequency in realtime.
 
