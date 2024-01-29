@@ -27,11 +27,11 @@ export default function App() {
   useEffect(() => {
     if (uploadedAudio) {
       // DECODE UPLOADED AUDIO & CREATE BUFFER
-      var reader1 = new FileReader();
+      const reader1 = new FileReader();
       reader1.readAsArrayBuffer(uploadedAudio);
       reader1.onload = function (ev) {
         ctx.decodeAudioData(ev.target.result).then(function (buffer) {
-          var soundSource = ctx.createBufferSource();
+          const soundSource = ctx.createBufferSource();
           soundSource.buffer = buffer;
           soundSource.connect(filter);
           playBufferedSample = () => soundSource.start();
@@ -41,7 +41,11 @@ export default function App() {
       };
       console.log("buffer created!");
     }
-  }, [uploadedAudio, isPlaying, toggle]);
+    console.log("component mounted!");
+  }, [uploadedAudio, toggle]);
+
+  // Note: start()/stop() can only be called ONCE per buffer. It's not so much like PLAY, but
+  // more like POWER. You power the buffer on; you power it off. Once it's off, it goes to GC.
 
   // PLAY, STOP, & LOOP BUFFERED AUDIO
   function playSample() {
@@ -51,10 +55,9 @@ export default function App() {
     setTimeout(suspendContext, bufferLength);
   }
 
-  // Currently broken. Seems to be attempting to access incorrect audio node.
   function stopSample() {
     stopBufferedSample();
-    setIsPlaying(false);
+    suspendContext();
   }
 
   function loopSample() {
@@ -69,9 +72,10 @@ export default function App() {
     }
   }
 
-  // SUSPEND AUDIO CONTEXT
+  // SUSPEND AUDIO CONTEXT, INIT NEW BUFFER
   function suspendContext() {
     ctx.suspend();
+    setToggle((prev) => (prev = !prev));
     setIsPlaying(false);
   }
 
@@ -105,7 +109,7 @@ export default function App() {
         <Knob freq={setFreq} />
       </div>
       <div className="copyright-and-links">
-        <p style={{marginLeft: '9px'}}>MIT 2024 © Mark Maxwell</p>
+        <p style={{ marginLeft: "9px" }}>MIT 2024 © Mark Maxwell</p>
         <div>
           <a href="https://github.com/mark-mxwl" target="_blank">
             <img src="src/assets/icon/github.svg" className="link-icons" />
