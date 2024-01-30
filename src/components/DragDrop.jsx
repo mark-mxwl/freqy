@@ -10,7 +10,7 @@ function DragDrop(props) {
     props.uploadedAudio(file);
   };
 
-  const fileNameWithSpaces = audioFile?.name.split('_').join(' ')
+  const fileNameWithSpaces = audioFile?.name.split("_").join(" ");
 
   const styles = {
     width: "60vw",
@@ -24,12 +24,13 @@ function DragDrop(props) {
     backgroundColor: "black",
     backgroundImage: "radial-gradient(rgba(0, 150, 0, 0.75), black 120%)",
     color: "white",
-    font: "1rem Inconsolata, monospace",
+    font: ".95rem Inconsolata, monospace",
+    cursor: "pointer",
   };
 
   return (
     <>
-      <div className="plugin-drag-drop">
+      <div title="File selector" className="plugin-drag-drop">
         <FileUploader
           handleChange={handleChange}
           name={audioFile?.name}

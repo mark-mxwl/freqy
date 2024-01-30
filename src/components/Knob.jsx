@@ -76,14 +76,18 @@ export default function Knob(props) {
             <div
               ref={knobRef}
               className="knob_inner"
-              title="Double-click to reset!"
+              title="Cutoff: double-click to reset!"
             >
               <div ref={pointerRef} className="knob_inner_pointer"></div>
             </div>
           </div>
           <div className="label label-r">10 KHz</div>
         </div>
-        <div ref={currentValueRef} className="current-value">
+        <div
+          title="Cutoff frequency"
+          ref={currentValueRef}
+          className="current-value"
+        >
           1000Hz
         </div>
       </div>
