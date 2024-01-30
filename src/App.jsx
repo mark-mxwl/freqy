@@ -5,11 +5,15 @@ import DragDrop from "./components/DragDrop.jsx";
 // CREATE AUDIO CONTEXT & FILTER
 const ctx = new AudioContext();
 const filter = ctx.createBiquadFilter();
+const filterTypes = ["lowpass", "highpass", "bandpass", "notch"];
 filter.connect(ctx.destination);
 
 let bufferLength;
 let playBufferedSample;
 let stopBufferedSample;
+let loopBufferedSample;
+
+let n = 0;
 
 export default function App() {
   ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
@@ -18,11 +22,14 @@ export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
-
+  
   // SET FILTER PROPERTIES
-  filter.type = "notch";
+  filter.type = filterTypes[n];
   filter.Q.value = 0.7;
   filter.frequency.value = freq;
+
+  // Note: start()/stop() can only be called ONCE per buffer. It's not so much like PLAY, but
+  // more like POWER. You power the buffer on; you power it off. Once it's off, it goes to GC.
 
   useEffect(() => {
     if (uploadedAudio) {
@@ -34,8 +41,13 @@ export default function App() {
           const soundSource = ctx.createBufferSource();
           soundSource.buffer = buffer;
           soundSource.connect(filter);
+          console.log(soundSource);
           playBufferedSample = () => soundSource.start();
           stopBufferedSample = () => soundSource.stop();
+          loopBufferedSample = () => {
+            soundSource.loop = true;
+            soundSource.loopEnd = buffer.duration;
+          };
           bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
         });
       };
@@ -44,8 +56,10 @@ export default function App() {
     console.log("component mounted!");
   }, [uploadedAudio, toggle]);
 
-  // Note: start()/stop() can only be called ONCE per buffer. It's not so much like PLAY, but
-  // more like POWER. You power the buffer on; you power it off. Once it's off, it goes to GC.
+  function handleClick(e) {
+    n = e.target.value
+    console.log(n)
+  }
 
   // PLAY, STOP, & LOOP BUFFERED AUDIO
   function playSample() {
@@ -63,13 +77,8 @@ export default function App() {
   function loopSample() {
     ctx.resume();
     setIsPlaying(true);
-    if (!isPlaying) {
-      playBufferedSample();
-      setInterval(() => {
-        setToggle((prev) => !prev);
-        playBufferedSample();
-      }, bufferLength);
-    }
+    playBufferedSample();
+    loopBufferedSample();
   }
 
   // SUSPEND AUDIO CONTEXT, INIT NEW BUFFER
@@ -82,27 +91,50 @@ export default function App() {
   return (
     <>
       <div className="plugin-container">
-        <h1>Notchy</h1>
+        <h1>FREQY</h1>
         <DragDrop uploadedAudio={setUploadedAudio} />
         <div className="plugin-drag-drop" style={{ marginTop: "25px" }}>
           <div className="plugin-control-bar">
-            <div onClick={playSample} id="play-btn">
-              <img
-                src="src/assets/icon/play-solid.svg"
-                className="plugin-control-buttons"
-              />
+            <div className="plugin-control-bar-L">
+              <fieldset>
+                <legend>Mode {">>"}</legend>
+                <div>
+                  <input type="radio" id="lp" name="mode" value="0" onClick={handleClick} defaultChecked />
+                  <label htmlFor="lp">Classic</label>
+                </div>
+                <div>
+                  <input type="radio" id="hp" name="mode" value="1" onClick={handleClick} />
+                  <label htmlFor="hp">Booth</label>
+                </div>
+                <div>
+                  <input type="radio" id="bp" name="mode" value="2" onClick={handleClick} />
+                  <label htmlFor="bp">Rave</label>
+                </div>
+                <div>
+                  <input type="radio" id="nc" name="mode" value="3" onClick={handleClick} />
+                  <label htmlFor="nc">Neuro</label>
+                </div>
+              </fieldset>
             </div>
-            <div onClick={stopSample} id="stop-btn">
-              <img
-                src="src/assets/icon/stop-solid.svg"
-                className="plugin-control-buttons"
-              />
-            </div>
-            <div onClick={loopSample} id="loop-btn">
-              <img
-                src="src/assets/icon/repeat-solid.svg"
-                className="plugin-control-buttons"
-              />
+            <div className="plugin-control-bar-R">
+              <div onClick={playSample} id="play-btn">
+                <img
+                  src="src/assets/icon/play-solid.svg"
+                  className="plugin-control-buttons"
+                />
+              </div>
+              <div onClick={stopSample} id="stop-btn">
+                <img
+                  src="src/assets/icon/stop-solid.svg"
+                  className="plugin-control-buttons"
+                />
+              </div>
+              <div onClick={loopSample} id="loop-btn">
+                <img
+                  src="src/assets/icon/repeat-solid.svg"
+                  className="plugin-control-buttons"
+                />
+              </div>
             </div>
           </div>
         </div>
