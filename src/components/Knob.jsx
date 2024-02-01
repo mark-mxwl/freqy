@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function Knob(props) {
   const componentIsMounted = useRef(false);
@@ -6,6 +6,7 @@ export default function Knob(props) {
   const knobRef = useRef();
   const pointerRef = useRef();
   const currentValueRef = useRef();
+  const [keyInput, setKeyInput] = useState("");
 
   let center = 0;
   let distance;
@@ -20,6 +21,35 @@ export default function Knob(props) {
       componentIsMounted.current = false;
     };
   }, []);
+
+  useEffect(
+    (e) => {
+      if (keyInput) {
+        distance = freqClamp(keyInput - 1000, 9000, -900);
+        props.freq(distance + 1000);
+        if (keyInput <= 1000) {
+          knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
+        }
+        if (keyInput > 1000) {
+          knobRef.current.style.transform = "rotate(" + distance / 55 + "deg)";
+        }
+      }
+    },
+    [keyInput]
+  );
+
+  function handleKeyInput(e) {
+    const isNumber = isFinite(e.key);
+    if (isNumber) {
+      setKeyInput((prev) => Number(prev + e.key));
+    }
+    if (keyInput && e.key === "ArrowUp") {
+      setKeyInput((prev) => (prev * 1.1).toFixed(0));
+    }
+    if (keyInput && e.key === "ArrowDown") {
+      setKeyInput((prev) => (prev / 1.1).toFixed(0));
+    }
+  }
 
   function freqClamp(value, max, min) {
     if (value > max) return max;
@@ -61,9 +91,23 @@ export default function Knob(props) {
     });
 
     knobRef.current.addEventListener("dblclick", (e) => {
-      mouseIsDown = false;
       knobRef.current.style.transform = "rotate(0deg)";
       currentValueRef.current.innerHTML = "1000Hz";
+      setKeyInput("");
+    });
+
+    currentValueRef.current.addEventListener("dblclick", (e) => {
+      knobRef.current.style.transform = "rotate(0deg)";
+      currentValueRef.current.innerHTML = "1000Hz";
+      setKeyInput("");
+    });
+
+    currentValueRef.current.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        knobRef.current.style.transform = "rotate(0deg)";
+        currentValueRef.current.innerHTML = "1000Hz";
+        setKeyInput("");
+      }
     });
   }
 
@@ -84,11 +128,13 @@ export default function Knob(props) {
           <div className="label label-r">10 KHz</div>
         </div>
         <div
-          title="Cutoff frequency"
+          title="Frequency: double-click (or ENTER) to reset!"
           ref={currentValueRef}
           className="current-value"
+          tabIndex={0}
+          onKeyDown={handleKeyInput}
         >
-          1000Hz
+          {keyInput ? `${freqClamp(keyInput, 10000, 100)}Hz` : "1000Hz"}
         </div>
       </div>
     </>

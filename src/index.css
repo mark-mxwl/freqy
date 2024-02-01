@@ -19,13 +19,12 @@ h1 {
 }
 
 fieldset {
-  display: flex;
-  flex-direction: column;
   border: 1px solid #242424;
   border-radius: 10px;
   width: fit-content;
   padding-right: 15px;
   text-align: left;
+  line-height: 1.4em;
 }
 
 input[type=radio] {

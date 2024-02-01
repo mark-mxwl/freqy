@@ -19,7 +19,6 @@ export default function App() {
   ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
 
   const [freq, setFreq] = useState(1000);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
 
@@ -28,8 +27,7 @@ export default function App() {
   filter.Q.value = 0.7;
   filter.frequency.value = freq;
 
-  // Note: start()/stop() can only be called ONCE per buffer. It's not so much like PLAY, but
-  // more like POWER. You power the buffer on; you power it off. Once it's off, it goes to GC.
+  // console.log(freq)
 
   useEffect(() => {
     if (uploadedAudio) {
@@ -41,7 +39,6 @@ export default function App() {
           const soundSource = ctx.createBufferSource();
           soundSource.buffer = buffer;
           soundSource.connect(filter);
-          // console.log(soundSource);
           playBufferedSample = () => soundSource.start();
           stopBufferedSample = () => soundSource.stop();
           loopBufferedSample = () => {
@@ -51,20 +48,28 @@ export default function App() {
           bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
         });
       };
-      // console.log("buffer created!");
     }
-    // console.log("component mounted!");
   }, [uploadedAudio, toggle]);
 
   function handleClick(e) {
     n = e.target.value;
-    // console.log(n)
+  }
+
+  function keyDown(e) {
+    if (e.key === "Enter" && e.target.id === "play-1") {
+      playSample()
+    };
+    if (e.key === "Enter" && e.target.id === "stop-1") {
+      stopSample()
+    };
+    if (e.key === "Enter" && e.target.id === "loop-1") {
+      loopSample()
+    };
   }
 
   // PLAY, STOP, & LOOP BUFFERED AUDIO
   function playSample() {
     ctx.resume();
-    setIsPlaying(true);
     playBufferedSample();
     setTimeout(suspendContext, bufferLength);
   }
@@ -76,7 +81,6 @@ export default function App() {
 
   function loopSample() {
     ctx.resume();
-    setIsPlaying(true);
     playBufferedSample();
     loopBufferedSample();
   }
@@ -85,7 +89,6 @@ export default function App() {
   function suspendContext() {
     ctx.suspend();
     setToggle((prev) => (prev = !prev));
-    setIsPlaying(false);
   }
 
   return (
@@ -145,34 +148,37 @@ export default function App() {
               <div id="play-btn">
                 <img
                   src="src/assets/icon/play-solid.svg"
-                  alt="play"
+                  alt="Play"
                   title="Play"
+                  id="play-1"
                   className="plugin-control-buttons"
                   onClick={playSample}
                   tabIndex={0}
-                  onKeyDown={playSample}
+                  onKeyDown={keyDown}
                 />
               </div>
               <div id="stop-btn">
                 <img
                   src="src/assets/icon/stop-solid.svg"
-                  alt="stop"
+                  alt="Stop"
                   title="Stop"
+                  id="stop-1"
                   className="plugin-control-buttons"
                   onClick={stopSample}
                   tabIndex={0}
-                  onKeyDown={stopSample}
+                  onKeyDown={keyDown}
                 />
               </div>
               <div id="loop-btn">
                 <img
                   src="src/assets/icon/repeat-solid.svg"
-                  alt="loop"
+                  alt="Loop"
                   title="Loop"
+                  id="loop-1"
                   className="plugin-control-buttons"
                   onClick={loopSample}
                   tabIndex={0}
-                  onKeyDown={loopSample}
+                  onKeyDown={keyDown}
                 />
               </div>
             </div>
