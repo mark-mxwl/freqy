@@ -128,7 +128,7 @@ export default function Knob(props) {
           <div className="label label-r">10 KHz</div>
         </div>
         <div
-          title="Frequency: double-click (or ENTER) to reset!"
+          title="Frequency: double-click to reset!"
           ref={currentValueRef}
           className="current-value"
           tabIndex={0}

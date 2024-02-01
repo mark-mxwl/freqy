@@ -100,7 +100,8 @@ label {
 }
 
 .plugin-control-bar-L {
-  width: 50%;
+  width: 40%;
+  padding-left: 5px;
   font-family: "Bungee", sans-serif;
   font-size: 9px;
   color: #242424;
