@@ -18,6 +18,10 @@ h1 {
   margin: 8px 0 15px 0;
 }
 
+h2 {
+  line-height: 1.2em;
+}
+
 fieldset {
   border: 1px solid #242424;
   border-radius: 10px;
@@ -25,6 +29,7 @@ fieldset {
   padding-right: 15px;
   text-align: left;
   line-height: 1.4em;
+  user-select: none;
 }
 
 input[type=radio] {
@@ -42,6 +47,40 @@ input[type=radio]:checked {
 
 label {
   cursor: pointer;
+}
+
+.modal-container {
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin: 30px auto 0px auto;
+  padding: 0 15px 10px 15px;
+  background-color: rgba(32, 32, 32, .9);
+  line-height: 1.4em;
+  height: 70vh;
+  width: 70vw;
+  max-width: 600px;
+  min-width: 300px;
+  max-height: 500px;
+  min-height: 380px;
+  border: none;
+  border-radius: 25px;
+  filter: drop-shadow(0px 15px 7px rgba(27, 27, 27, .8));
+  z-index: 1;
+  visibility: visible;
+}
+
+.modal-x {
+  font-family: "Monoton", sans-serif;
+  font-size: 25px;
+  text-align: right;
+  color: #8cbaff;
+  cursor: pointer;
+  margin: 20px 20px 20px 0; 
+  transition: color .2s;
+}
+.modal-x:hover {
+  color: rgb(255, 77, 77);
 }
 
 .copyright-and-links {
@@ -122,6 +161,7 @@ label {
     contrast(85%) drop-shadow(0px 10px 4px rgba(51, 51, 51, 0.5));
   transition: transform 0.2s;
   cursor: pointer;
+  user-select: none;
 }
 .plugin-control-buttons:hover {
   transform: scale(1.2);
@@ -207,4 +247,5 @@ label {
   background-image: radial-gradient(rgba(0, 150, 0, 0.75), black 120%);
   color: white;
   font: 2rem Inconsolata, monospace;
+  cursor: pointer;
 }

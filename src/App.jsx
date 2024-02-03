@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import Knob from "./components/Knob.jsx";
 import DragDrop from "./components/DragDrop.jsx";
+import InfoModal from "./components/InfoModal.jsx";
 
-// CREATE AUDIO CONTEXT & FILTER
 const ctx = new AudioContext();
+const reader1 = new FileReader();
 const filter = ctx.createBiquadFilter();
 const filterTypes = ["lowpass", "highpass", "bandpass", "notch"];
 filter.connect(ctx.destination);
 
+let currentBuffer;
 let bufferLength;
 let playBufferedSample;
 let stopBufferedSample;
@@ -16,58 +18,65 @@ let loopBufferedSample;
 let n = 0;
 
 export default function App() {
-  ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
+  // ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
 
   const [freq, setFreq] = useState(1000);
   const [toggle, setToggle] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
+  const [bufferReady, setBufferReady] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const handleModal = () => setIsVisible(true);
+  const handleClick = (e) => n = e.target.value;
 
-  // SET FILTER PROPERTIES
   filter.type = filterTypes[n];
   filter.Q.value = 0.7;
   filter.frequency.value = freq;
 
-  // console.log(freq)
-
+  // CREATE BUFFER
   useEffect(() => {
     if (uploadedAudio) {
-      // DECODE UPLOADED AUDIO & CREATE BUFFER
-      const reader1 = new FileReader();
       reader1.readAsArrayBuffer(uploadedAudio);
-      reader1.onload = function (ev) {
-        ctx.decodeAudioData(ev.target.result).then(function (buffer) {
-          const soundSource = ctx.createBufferSource();
-          soundSource.buffer = buffer;
-          soundSource.connect(filter);
-          playBufferedSample = () => soundSource.start();
-          stopBufferedSample = () => soundSource.stop();
-          loopBufferedSample = () => {
-            soundSource.loop = true;
-            soundSource.loopEnd = buffer.duration;
-          };
-          bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
+      reader1.onload = function (e) {
+        ctx.decodeAudioData(e.target.result).then(function (buffer) {
+          currentBuffer = buffer;
+          console.log("buffer created!");
+          console.log(currentBuffer);
+          setBufferReady(true);
+          setToggle((prev) => (prev = !prev));
         });
       };
     }
-  }, [uploadedAudio, toggle]);
+  }, [uploadedAudio]);
 
-  function handleClick(e) {
-    n = e.target.value;
-  }
+  // CREATE SOURCE NODE
+  useEffect(() => {
+    if (bufferReady === true) {
+      const soundSource = ctx.createBufferSource();
+      soundSource.buffer = currentBuffer;
+      soundSource.connect(filter);
+      playBufferedSample = () => soundSource.start();
+      stopBufferedSample = () => soundSource.stop();
+      loopBufferedSample = () => {
+        soundSource.loop = true;
+        soundSource.loopEnd = currentBuffer.duration;
+      };
+      bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
+      console.log("source node created!");
+    }
+  }, [toggle]);
 
   function keyDown(e) {
     if (e.key === "Enter" && e.target.id === "play-1") {
-      playSample()
-    };
+      playSample();
+    }
     if (e.key === "Enter" && e.target.id === "stop-1") {
-      stopSample()
-    };
+      stopSample();
+    }
     if (e.key === "Enter" && e.target.id === "loop-1") {
-      loopSample()
-    };
+      loopSample();
+    }
   }
 
-  // PLAY, STOP, & LOOP BUFFERED AUDIO
   function playSample() {
     ctx.resume();
     playBufferedSample();
@@ -85,7 +94,6 @@ export default function App() {
     loopBufferedSample();
   }
 
-  // SUSPEND AUDIO CONTEXT, INIT NEW BUFFER
   function suspendContext() {
     ctx.suspend();
     setToggle((prev) => (prev = !prev));
@@ -93,6 +101,10 @@ export default function App() {
 
   return (
     <>
+      <InfoModal
+        isVisible={isVisible}
+        toggleModal={() => setIsVisible(false)}
+      />
       <div className="plugin-container">
         <h1>FREQY</h1>
         <DragDrop uploadedAudio={setUploadedAudio} />
@@ -189,17 +201,25 @@ export default function App() {
       <div className="copyright-and-links">
         <p style={{ marginLeft: "9px" }}>MIT 2024 © Mark Maxwell</p>
         <div>
+          <img
+            src="src/assets/icon/universal-access-solid.svg"
+            alt="Universal Access"
+            className="link-icons"
+            onClick={handleModal}
+            tabIndex={0}
+            onKeyDown={handleModal}
+          />
           <a href="https://github.com/mark-mxwl" target="_blank">
             <img
               src="src/assets/icon/github.svg"
-              alt="github"
+              alt="GitHub"
               className="link-icons"
             />
           </a>
           <a href="https://markmaxwelldev.com" target="_blank">
             <img
               src="src/assets/icon/M_nav_icon_1.svg"
-              alt="markmaxwelldev.com"
+              alt="Website"
               className="link-icons"
             />
           </a>

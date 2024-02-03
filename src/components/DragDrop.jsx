@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 
 const fileTypes = ["wav", "aiff", "mp3"];
@@ -26,6 +26,7 @@ function DragDrop(props) {
     color: "white",
     font: ".95rem Inconsolata, monospace",
     cursor: "pointer",
+    userSelect: "none",
   };
 
   return (
