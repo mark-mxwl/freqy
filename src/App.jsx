@@ -15,20 +15,25 @@ let playBufferedSample;
 let stopBufferedSample;
 let loopBufferedSample;
 
-let n = 0;
-
+const freqRange = 10500; // Represents desired freq. range (eg. 100Hz - 10KHz)
+const midiCCRange = 128; // Represents MIDI CC values 0 - 127
+const midiIncrement = (freqRange / midiCCRange).toFixed(0);
+let midiToFreq = 1000;
 let midiDeviceName;
 
+let n = 0;
+
 export default function App() {
-  
-  const [freq, setFreq] = useState(1000);
-  const [toggle, setToggle] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
   const [bufferReady, setBufferReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [freq, setFreq] = useState(1000);
+
   const [midiCC, setMidiCC] = useState(0);
-  const [selectedMidiCC, setSelectedMidiCC] = useState(0);
   const [midiValue, setMidiValue] = useState(0);
+
+  const [toggle, setToggle] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
   const handleModal = () => setIsVisible(true);
   const handleClick = (e) => (n = e.target.value);
 
@@ -36,42 +41,7 @@ export default function App() {
   filter.Q.value = 0.7;
   filter.frequency.value = freq;
 
-  // START MIDI
-  navigator.requestMIDIAccess().then(
-    (access) => {
-      access.addEventListener("statechange", findDevices);
-
-      const inputs = access.inputs;
-      inputs.forEach((input) => {
-        input.addEventListener("midimessage", handleInput);
-      });
-    },
-    (fail) => {
-      console.log(`Could not connect to MIDI. Error: ${fail}`);
-    }
-  );
-
-  function findDevices(e) {
-    midiDeviceName = e.port.name;
-  }
-
-  function handleInput(input) {
-    // data[1] is CC #
-    // data[2] is value
-    setMidiCC(input.data[1]);
-    setMidiValue(input.data[2]);
-    // setFreq(prev => prev + (midiValue * 80).toFixed(0))
-  }
-
-  // MIDI icon: Once clicked, displays modal: "Map MIDI CC to Cutoff knob."
-  // Once mapped, modal collapses, device/cc#/value displayed alongside MIDI icon.
-
-  // console.log(freq)
-
-  // END MIDI
-
-
-  // CREATE BUFFER
+  // CREATE AUDIO BUFFER
   useEffect(() => {
     if (uploadedAudio) {
       reader1.readAsArrayBuffer(uploadedAudio);
@@ -87,7 +57,7 @@ export default function App() {
     }
   }, [uploadedAudio]);
 
-  // CREATE SOURCE NODE
+  // CREATE BUFFER SOURCE NODE
   useEffect(() => {
     if (bufferReady === true) {
       const soundSource = ctx.createBufferSource();
@@ -103,6 +73,32 @@ export default function App() {
       console.log("source node created!");
     }
   }, [toggle]);
+
+  // ACCESS MIDI
+  useEffect(() => {
+    navigator.requestMIDIAccess().then(
+      (access) => {
+        access.addEventListener("statechange", findMidiDevices);
+        const inputs = access.inputs;
+        inputs.forEach((input) => {
+          input.addEventListener("midimessage", handleMidiInput);
+        });
+      },
+      (fail) => {
+        console.log(`Could not connect to MIDI. Error: ${fail}`);
+      }
+    );
+  },[])
+
+  function findMidiDevices(e) {
+    midiDeviceName = e.port.name;
+  }
+
+  function handleMidiInput(e) {
+    setMidiCC(e.data[1]);
+    setMidiValue(e.data[2]);
+    midiToFreq = e.data[2] * midiIncrement;
+  }
 
   function keyDown(e) {
     if (e.key === "Enter" && e.target.id === "play-1") {
@@ -250,7 +246,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        <Knob freq={setFreq} midiCC={midiCC} midiValue={midiValue} />
+        <Knob setFiltFreq={setFreq} midiFreq={midiToFreq} />
       </div>
       <div className="copyright-and-links">
         <p style={{ marginLeft: "9px" }}>MIT 2024 © Mark Maxwell</p>

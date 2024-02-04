@@ -8,9 +8,7 @@ export default function Knob(props) {
   const currentValueRef = useRef();
   const [keyInput, setKeyInput] = useState("");
 
-  const { freq, midiCC, midiValue } = props;
-
-  // console.log(midiValue)
+  const { setFiltFreq, midiFreq } = props;
 
   let center = 0;
   let distance;
@@ -26,21 +24,32 @@ export default function Knob(props) {
     };
   }, []);
 
-  useEffect(
-    () => {
-      if (keyInput) {
-        distance = freqClamp(keyInput - 1000, 9000, -900);
-        freq(distance + 1000);
-        if (keyInput <= 1000) {
-          knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
-        }
-        if (keyInput > 1000) {
-          knobRef.current.style.transform = "rotate(" + distance / 55 + "deg)";
-        }
+  useEffect(() => {
+    if (midiFreq) {
+      distance = freqClamp(midiFreq - 1000, 9000, -900);
+      setFiltFreq(distance + 1000);
+      if (midiFreq <= 1000) {
+        knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
       }
-    },
-    [keyInput]
-  );
+      if (midiFreq > 1000) {
+        knobRef.current.style.transform = "rotate(" + distance / 55 + "deg)";
+      }
+      currentValueRef.current.innerHTML = distance + 1000 + "Hz";
+    }
+  }, [midiFreq]);
+
+  useEffect(() => {
+    if (keyInput) {
+      distance = freqClamp(keyInput - 1000, 9000, -900);
+      setFiltFreq(distance + 1000);
+      if (keyInput <= 1000) {
+        knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
+      }
+      if (keyInput > 1000) {
+        knobRef.current.style.transform = "rotate(" + distance / 55 + "deg)";
+      }
+    }
+  }, [keyInput]);
 
   function handleKeyInput(e) {
     const isNumber = isFinite(e.key);
@@ -90,7 +99,7 @@ export default function Knob(props) {
         knobRef.current.style.transform =
           "rotate(" + distance / divisor + "deg)";
         currentValueRef.current.innerHTML = distance + 1000 + "Hz";
-        freq(distance + 1000);
+        setFiltFreq(distance + 1000);
       }
     });
 
