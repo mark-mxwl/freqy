@@ -53,7 +53,7 @@ label {
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
-  margin: 30px auto 0px auto;
+  margin: 70px auto 0px auto;
   padding: 0 15px 10px 15px;
   background-color: rgba(32, 32, 32, .9);
   line-height: 1.4em;
@@ -83,13 +83,34 @@ label {
   color: rgb(255, 77, 77);
 }
 
-.copyright-and-links {
+.midi-and-accessibility {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 90vw;
   max-width: 750px;
   min-width: 350px;
-  margin: 40px auto 0px auto;
+  margin: 20px auto 0px auto;
+  
+}
+.midi {
+  border: 1px solid rgba(165, 165, 165, 0.8);
+  border-radius: 20px;
+  margin-left: 9px;
+}
+.midi p {
+  margin: 8px;
+  padding-right: 3px;
+}
+
+.copyright-and-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90vw;
+  max-width: 750px;
+  min-width: 350px;
+  margin: 30px auto 0px auto;
 }
 
 .link-icons {
@@ -112,7 +133,7 @@ label {
 
 .plugin-container {
   background-color: rgb(233, 233, 233);
-  margin: 30px auto 0px auto;
+  margin: 20px auto 0px auto;
   height: 580px;
   width: 90vw;
   max-width: 750px;

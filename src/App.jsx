@@ -17,20 +17,59 @@ let loopBufferedSample;
 
 let n = 0;
 
-export default function App() {
-  // ctx.onstatechange = () => console.log(ctx.state, ctx.currentTime.toFixed(2));
+let midiDeviceName;
 
+export default function App() {
+  
   const [freq, setFreq] = useState(1000);
   const [toggle, setToggle] = useState(false);
   const [uploadedAudio, setUploadedAudio] = useState(null);
   const [bufferReady, setBufferReady] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [midiCC, setMidiCC] = useState(0);
+  const [selectedMidiCC, setSelectedMidiCC] = useState(0);
+  const [midiValue, setMidiValue] = useState(0);
   const handleModal = () => setIsVisible(true);
-  const handleClick = (e) => n = e.target.value;
+  const handleClick = (e) => (n = e.target.value);
 
   filter.type = filterTypes[n];
   filter.Q.value = 0.7;
   filter.frequency.value = freq;
+
+  // START MIDI
+  navigator.requestMIDIAccess().then(
+    (access) => {
+      access.addEventListener("statechange", findDevices);
+
+      const inputs = access.inputs;
+      inputs.forEach((input) => {
+        input.addEventListener("midimessage", handleInput);
+      });
+    },
+    (fail) => {
+      console.log(`Could not connect to MIDI. Error: ${fail}`);
+    }
+  );
+
+  function findDevices(e) {
+    midiDeviceName = e.port.name;
+  }
+
+  function handleInput(input) {
+    // data[1] is CC #
+    // data[2] is value
+    setMidiCC(input.data[1]);
+    setMidiValue(input.data[2]);
+    // setFreq(prev => prev + (midiValue * 80).toFixed(0))
+  }
+
+  // MIDI icon: Once clicked, displays modal: "Map MIDI CC to Cutoff knob."
+  // Once mapped, modal collapses, device/cc#/value displayed alongside MIDI icon.
+
+  // console.log(freq)
+
+  // END MIDI
+
 
   // CREATE BUFFER
   useEffect(() => {
@@ -105,6 +144,21 @@ export default function App() {
         isVisible={isVisible}
         toggleModal={() => setIsVisible(false)}
       />
+      <div className="midi-and-accessibility">
+        <div className="midi">
+          <p>
+            {`MIDI: ${midiDeviceName} | CC#: ${midiCC} | Value: ${midiValue}`}
+          </p>
+        </div>
+        <img
+          src="src/assets/icon/universal-access-solid.svg"
+          alt="Universal Access"
+          className="link-icons"
+          onClick={handleModal}
+          tabIndex={0}
+          onKeyDown={handleModal}
+        />
+      </div>
       <div className="plugin-container">
         <h1>FREQY</h1>
         <DragDrop uploadedAudio={setUploadedAudio} />
@@ -196,19 +250,11 @@ export default function App() {
             </div>
           </div>
         </div>
-        <Knob freq={setFreq} />
+        <Knob freq={setFreq} midiCC={midiCC} midiValue={midiValue} />
       </div>
       <div className="copyright-and-links">
         <p style={{ marginLeft: "9px" }}>MIT 2024 © Mark Maxwell</p>
         <div>
-          <img
-            src="src/assets/icon/universal-access-solid.svg"
-            alt="Universal Access"
-            className="link-icons"
-            onClick={handleModal}
-            tabIndex={0}
-            onKeyDown={handleModal}
-          />
           <a href="https://github.com/mark-mxwl" target="_blank">
             <img
               src="src/assets/icon/github.svg"

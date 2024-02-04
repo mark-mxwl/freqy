@@ -8,6 +8,10 @@ export default function Knob(props) {
   const currentValueRef = useRef();
   const [keyInput, setKeyInput] = useState("");
 
+  const { freq, midiCC, midiValue } = props;
+
+  // console.log(midiValue)
+
   let center = 0;
   let distance;
   let mouseIsDown = false;
@@ -23,10 +27,10 @@ export default function Knob(props) {
   }, []);
 
   useEffect(
-    (e) => {
+    () => {
       if (keyInput) {
         distance = freqClamp(keyInput - 1000, 9000, -900);
-        props.freq(distance + 1000);
+        freq(distance + 1000);
         if (keyInput <= 1000) {
           knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
         }
@@ -86,7 +90,7 @@ export default function Knob(props) {
         knobRef.current.style.transform =
           "rotate(" + distance / divisor + "deg)";
         currentValueRef.current.innerHTML = distance + 1000 + "Hz";
-        props.freq(distance + 1000);
+        freq(distance + 1000);
       }
     });
 
