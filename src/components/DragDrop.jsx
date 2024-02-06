@@ -22,8 +22,6 @@ function DragDrop(props) {
     border: "none",
     borderRadius: "20px",
     backgroundColor: "#242424",
-    // backgroundColor: "black",
-    // backgroundImage: "radial-gradient(rgba(0, 150, 0, 0.75), black 120%)",
     color: "rgba(255, 255, 255, 0.9)",
     font: ".95rem Inconsolata, monospace",
     cursor: "pointer",

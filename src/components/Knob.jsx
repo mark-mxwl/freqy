@@ -26,42 +26,38 @@ export default function Knob(props) {
 
   useEffect(() => {
     if (midiFreq) {
-      distance = freqClamp(midiFreq - 1000, 9000, -900);
-      setFiltFreq(distance + 1000);
-      if (midiFreq <= 1000) {
-        knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
-      }
-      if (midiFreq > 1000) {
-        knobRef.current.style.transform = "rotate(" + distance / 55 + "deg)";
-      }
-      currentValueRef.current.innerHTML = distance + 1000 + "Hz";
+      distance = freqClamp(midiFreq - 5000, 5000, -4900);
+      setFiltFreq(distance + 5000);
+      knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
+      currentValueRef.current.innerHTML = distance + 5000 + "Hz";
     }
   }, [midiFreq]);
 
   useEffect(() => {
     if (keyInput) {
-      distance = freqClamp(keyInput - 1000, 9000, -900);
-      setFiltFreq(distance + 1000);
-      if (keyInput <= 1000) {
-        knobRef.current.style.transform = "rotate(" + distance / 5.5 + "deg)";
-      }
-      if (keyInput > 1000) {
-        knobRef.current.style.transform = "rotate(" + distance / 55 + "deg)";
-      }
+      distance = freqClamp(keyInput - 5000, 5000, -4900);
+      setFiltFreq(distance + 5000);
+      knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
+      currentValueRef.current.innerHTML = distance + 5000 + "Hz";
     }
   }, [keyInput]);
 
   function handleKeyInput(e) {
+    
+    // For typed values
     const isNumber = isFinite(e.key);
     if (isNumber) {
       setKeyInput((prev) => Number(prev + e.key));
     }
+
+    // For arrow values
+    let arrowIncrement = 180;
     if (keyInput && e.key === "ArrowUp") {
-      setKeyInput((prev) => (prev * 1.1).toFixed(0));
+      setKeyInput((prev) => prev + arrowIncrement);
     }
     if (keyInput && e.key === "ArrowDown") {
-      setKeyInput((prev) => (prev / 1.1).toFixed(0));
-    }
+      setKeyInput((prev) => prev - arrowIncrement);
+    } 
   }
 
   function freqClamp(value, max, min) {
@@ -88,37 +84,37 @@ export default function Knob(props) {
 
     document.body.addEventListener("mousemove", (e) => {
       mouseIsMoving = true;
-      let divisor = 5.5;
-      let multiplier = 6;
+      // let divisor = 5.5;
+      // let multiplier = 6;
       if (mouseIsDown && mouseIsMoving) {
-        if (e.pageY < center) {
-          multiplier = 50;
-          divisor = 55;
-        }
-        distance = freqClamp((center - e.pageY) * multiplier, 9000, -900);
+        // if (e.pageY < center) {
+          let multiplier = 38;
+          let divisor = 32;
+        // }
+        distance = freqClamp((center - e.pageY) * multiplier, 5000, -4900);
         knobRef.current.style.transform =
           "rotate(" + distance / divisor + "deg)";
-        currentValueRef.current.innerHTML = distance + 1000 + "Hz";
-        setFiltFreq(distance + 1000);
+        currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+        setFiltFreq(distance + 5000);
       }
     });
 
     knobRef.current.addEventListener("dblclick", (e) => {
       knobRef.current.style.transform = "rotate(0deg)";
-      currentValueRef.current.innerHTML = "1000Hz";
+      currentValueRef.current.innerHTML = "5000Hz";
       setKeyInput("");
     });
 
     currentValueRef.current.addEventListener("dblclick", (e) => {
       knobRef.current.style.transform = "rotate(0deg)";
-      currentValueRef.current.innerHTML = "1000Hz";
+      currentValueRef.current.innerHTML = "5000Hz";
       setKeyInput("");
     });
 
     currentValueRef.current.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         knobRef.current.style.transform = "rotate(0deg)";
-        currentValueRef.current.innerHTML = "1000Hz";
+        currentValueRef.current.innerHTML = "5000Hz";
         setKeyInput("");
       }
     });
@@ -147,7 +143,7 @@ export default function Knob(props) {
           tabIndex={0}
           onKeyDown={handleKeyInput}
         >
-          {keyInput ? `${freqClamp(keyInput, 10000, 100)}Hz` : "1000Hz"}
+          {keyInput ? `${freqClamp(keyInput, 10000, 100)}Hz` : "5000Hz"}
         </div>
       </div>
     </>

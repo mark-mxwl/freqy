@@ -15,10 +15,10 @@ let playBufferedSample;
 let stopBufferedSample;
 let loopBufferedSample;
 
-const freqRange = 10500; // Represents desired freq. range (eg. 100Hz - 10KHz)
-const midiCCRange = 128; // Represents MIDI CC values 0 - 127
-const midiIncrement = (freqRange / midiCCRange).toFixed(0);
-let midiToFreq = 1000;
+const filterFreqRange = 10500;
+const midiCCRange = 128;
+const midiIncrement = (filterFreqRange / midiCCRange).toFixed(0);
+let midiToFreq = 5000;
 let midiDeviceName;
 
 let n = 0;
@@ -26,10 +26,11 @@ let n = 0;
 export default function App() {
   const [uploadedAudio, setUploadedAudio] = useState(null);
   const [bufferReady, setBufferReady] = useState(false);
-  const [freq, setFreq] = useState(1000);
+  const [freq, setFreq] = useState(5000);
 
   const [midiCC, setMidiCC] = useState(0);
   const [midiValue, setMidiValue] = useState(0);
+  const [useMidi, setUseMidi] = useState(false);
 
   const [toggle, setToggle] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -88,7 +89,7 @@ export default function App() {
         console.log(`Could not connect to MIDI. Error: ${fail}`);
       }
     );
-  },[])
+  }, []);
 
   function findMidiDevices(e) {
     midiDeviceName = e.port.name;
@@ -100,7 +101,11 @@ export default function App() {
     midiToFreq = e.data[2] * midiIncrement;
   }
 
-  function keyDown(e) {
+  function handleMidiClick() {
+    setUseMidi((prev) => (prev = !prev));
+  }
+
+  function controlBarKeyDown(e) {
     if (e.key === "Enter" && e.target.id === "play-1") {
       playSample();
     }
@@ -141,8 +146,22 @@ export default function App() {
         toggleModal={() => setIsVisible(false)}
       />
       <div className="midi-and-accessibility">
-        <div className="midi">
-          <p>
+        <div
+          className="midi"
+          style={{ border: !useMidi && "1px solid rgba(165, 165, 165, 0)" }}
+        >
+          <img
+            src="src/assets/icon/midi-port.svg"
+            className="link-icons"
+            onClick={handleMidiClick}
+            tabIndex={0}
+            style={{
+              filter:
+                useMidi &&
+                "invert(75%) sepia(61%) saturate(411%) hue-rotate(353deg) brightness(101%) contrast(101%)",
+            }}
+          />
+          <p style={{ display: !useMidi && "none" }}>
             {`MIDI: ${midiDeviceName} | CC#: ${midiCC} | Value: ${midiValue}`}
           </p>
         </div>
@@ -172,7 +191,13 @@ export default function App() {
                     onClick={handleClick}
                     defaultChecked
                   />
-                  <label htmlFor="lp">low</label>
+                  <label htmlFor="lp">Classic</label>
+                  <div className="filter-icon-wrapper">
+                    <img
+                      src="src/assets/icon/filter-lowpass.svg"
+                      className="filter-icons"
+                    />
+                  </div>
                 </div>
                 <div title="Highpass filter">
                   <input
@@ -182,7 +207,13 @@ export default function App() {
                     value="1"
                     onClick={handleClick}
                   />
-                  <label htmlFor="hp">high</label>
+                  <label htmlFor="hp">DJ Booth</label>
+                  <div className="filter-icon-wrapper">
+                    <img
+                      src="src/assets/icon/filter-lowpass.svg"
+                      className="filter-icons flip-hztl"
+                    />
+                  </div>
                 </div>
                 <div title="Bandpass filter">
                   <input
@@ -192,7 +223,13 @@ export default function App() {
                     value="2"
                     onClick={handleClick}
                   />
-                  <label htmlFor="bp">band</label>
+                  <label htmlFor="bp">Trip-Hop</label>
+                  <div className="filter-icon-wrapper">
+                    <img
+                      src="src/assets/icon/filter-notch.svg"
+                      className="filter-icons flip-vrtl"
+                    />
+                  </div>
                 </div>
                 <div title="Notch filter">
                   <input
@@ -202,7 +239,14 @@ export default function App() {
                     value="3"
                     onClick={handleClick}
                   />
-                  <label htmlFor="nc">notch</label>
+                  <label htmlFor="nc">Nu-Skool</label>
+                  <div className="filter-icon-wrapper">
+                    <img
+                      src="src/assets/icon/filter-notch.svg"
+                      className="filter-icons"
+                      style={{ marginRight: "7px" }}
+                    />
+                  </div>
                 </div>
               </fieldset>
             </div>
@@ -216,7 +260,7 @@ export default function App() {
                   className="plugin-control-buttons"
                   onClick={playSample}
                   tabIndex={0}
-                  onKeyDown={keyDown}
+                  onKeyDown={controlBarKeyDown}
                 />
               </div>
               <div id="stop-btn">
@@ -228,7 +272,7 @@ export default function App() {
                   className="plugin-control-buttons"
                   onClick={stopSample}
                   tabIndex={0}
-                  onKeyDown={keyDown}
+                  onKeyDown={controlBarKeyDown}
                 />
               </div>
               <div id="loop-btn">
@@ -240,7 +284,7 @@ export default function App() {
                   className="plugin-control-buttons"
                   onClick={loopSample}
                   tabIndex={0}
-                  onKeyDown={keyDown}
+                  onKeyDown={controlBarKeyDown}
                 />
               </div>
             </div>
