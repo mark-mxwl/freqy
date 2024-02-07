@@ -6,7 +6,24 @@ import InfoModal from "./components/InfoModal.jsx";
 const ctx = new AudioContext();
 const reader1 = new FileReader();
 const filter = ctx.createBiquadFilter();
-const filterTypes = ["lowpass", "highpass", "bandpass", "notch"];
+const filterTypes = [
+  {
+    type: "lowpass",
+    q: 4,
+  },
+  {
+    type: "highpass",
+    q: 4,
+  },
+  {
+    type: "bandpass",
+    q: 0.7,
+  },
+  {
+    type: "notch",
+    q: 0.7,
+  },
+];
 filter.connect(ctx.destination);
 
 let currentBuffer;
@@ -31,6 +48,7 @@ export default function App() {
   const [midiCC, setMidiCC] = useState(0);
   const [midiValue, setMidiValue] = useState(0);
   const [useMidi, setUseMidi] = useState(false);
+  const [toggleMidi, setToggleMidi] = useState(false);
 
   const [toggle, setToggle] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -38,8 +56,8 @@ export default function App() {
   const handleModal = () => setIsVisible(true);
   const handleClick = (e) => (n = e.target.value);
 
-  filter.type = filterTypes[n];
-  filter.Q.value = 0.7;
+  filter.type = filterTypes[n].type;
+  filter.Q.value = filterTypes[n].q;
   filter.frequency.value = freq;
 
   // CREATE AUDIO BUFFER
@@ -49,8 +67,6 @@ export default function App() {
       reader1.onload = function (e) {
         ctx.decodeAudioData(e.target.result).then(function (buffer) {
           currentBuffer = buffer;
-          console.log("buffer created!");
-          console.log(currentBuffer);
           setBufferReady(true);
           setToggle((prev) => (prev = !prev));
         });
@@ -58,7 +74,7 @@ export default function App() {
     }
   }, [uploadedAudio]);
 
-  // CREATE BUFFER SOURCE NODE
+  // CREATE SOURCE NODE
   useEffect(() => {
     if (bufferReady === true) {
       const soundSource = ctx.createBufferSource();
@@ -71,7 +87,6 @@ export default function App() {
         soundSource.loopEnd = currentBuffer.duration;
       };
       bufferLength = Number(soundSource.buffer.duration.toFixed(0) * 1000);
-      console.log("source node created!");
     }
   }, [toggle]);
 
@@ -89,10 +104,16 @@ export default function App() {
         console.log(`Could not connect to MIDI. Error: ${fail}`);
       }
     );
-  }, []);
+  }, [toggleMidi]);
 
   function findMidiDevices(e) {
-    midiDeviceName = e.port.name;
+    if (e.port.connection === "closed") {
+      setToggleMidi(false);
+      midiDeviceName = "No Device Detected";
+    } else {
+      setToggleMidi(true);
+      midiDeviceName = e.port.name;
+    }
   }
 
   function handleMidiInput(e) {
@@ -153,25 +174,45 @@ export default function App() {
           <img
             src="src/assets/icon/midi-port.svg"
             className="link-icons"
+            alt="MIDI"
+            title="MIDI"
             onClick={handleMidiClick}
             tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleMidiClick();
+              }
+            }}
             style={{
               filter:
                 useMidi &&
-                "invert(75%) sepia(61%) saturate(411%) hue-rotate(353deg) brightness(101%) contrast(101%)",
+                "invert(75%) sepia(61%) saturate(411%) \
+                hue-rotate(353deg) brightness(101%) contrast(101%)",
+              cursor: "pointer",
             }}
           />
           <p style={{ display: !useMidi && "none" }}>
-            {`MIDI: ${midiDeviceName} | CC#: ${midiCC} | Value: ${midiValue}`}
+            {`MIDI: ${midiDeviceName} | CC#: ${midiCC} | Value: ${
+              midiValue === undefined ? 0 : midiValue
+            }`}
           </p>
         </div>
         <img
           src="src/assets/icon/universal-access-solid.svg"
           alt="Universal Access"
+          title="Universal Access"
           className="link-icons"
           onClick={handleModal}
           tabIndex={0}
-          onKeyDown={handleModal}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setIsVisible(true);
+            }
+            if (e.key === "Escape") {
+              setIsVisible(false);
+            }
+          }}
+          style={{ cursor: "pointer" }}
         />
       </div>
       <div className="plugin-container">
@@ -299,14 +340,18 @@ export default function App() {
             <img
               src="src/assets/icon/github.svg"
               alt="GitHub"
+              title="GitHub"
               className="link-icons"
+              // tabIndex={0}
             />
           </a>
           <a href="https://markmaxwelldev.com" target="_blank">
             <img
               src="src/assets/icon/M_nav_icon_1.svg"
               alt="Website"
+              title="Website"
               className="link-icons"
+              // tabIndex={0}
             />
           </a>
         </div>

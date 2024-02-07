@@ -52,11 +52,11 @@ export default function Knob(props) {
 
     // For arrow values
     let arrowIncrement = 180;
-    if (keyInput && e.key === "ArrowUp") {
-      setKeyInput((prev) => prev + arrowIncrement);
+    if (e.key === "ArrowUp") {
+      setKeyInput((prev) => Number(prev + arrowIncrement));
     }
-    if (keyInput && e.key === "ArrowDown") {
-      setKeyInput((prev) => prev - arrowIncrement);
+    if (e.key === "ArrowDown") {
+      setKeyInput((prev) => Number(prev - arrowIncrement));
     } 
   }
 
@@ -84,16 +84,10 @@ export default function Knob(props) {
 
     document.body.addEventListener("mousemove", (e) => {
       mouseIsMoving = true;
-      // let divisor = 5.5;
-      // let multiplier = 6;
       if (mouseIsDown && mouseIsMoving) {
-        // if (e.pageY < center) {
-          let multiplier = 38;
-          let divisor = 32;
-        // }
-        distance = freqClamp((center - e.pageY) * multiplier, 5000, -4900);
+        distance = freqClamp((center - e.pageY) * 38, 5000, -4900);
         knobRef.current.style.transform =
-          "rotate(" + distance / divisor + "deg)";
+          "rotate(" + distance / 32 + "deg)";
         currentValueRef.current.innerHTML = distance + 5000 + "Hz";
         setFiltFreq(distance + 5000);
       }

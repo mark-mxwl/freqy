@@ -19,7 +19,7 @@ h1 {
 }
 
 h2 {
-  line-height: 1.2em;
+  line-height: 1.3em;
 }
 
 fieldset {
@@ -76,7 +76,7 @@ label {
   margin: 70px auto 0px auto;
   padding: 0 15px 10px 15px;
   background-color: rgba(32, 32, 32, .9);
-  line-height: 1.4em;
+  line-height: 1.5em;
   height: 70vh;
   width: 70vw;
   max-width: 600px;
@@ -96,7 +96,7 @@ label {
   text-align: right;
   color: #63a6c2;
   cursor: pointer;
-  margin: 20px 20px 20px 0; 
+  margin: 20px 20px 30px 0; 
   transition: color .2s;
 }
 .modal-x:hover {
@@ -112,6 +112,7 @@ label {
   min-width: 350px;
   margin: 20px auto 0px auto;
 }
+
 .midi {
   display: flex;
   align-items: center;

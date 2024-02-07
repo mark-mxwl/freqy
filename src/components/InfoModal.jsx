@@ -1,14 +1,22 @@
 function InfoModal(props) {
 
+  const { isVisible, toggleModal } = props;
+
   return (
     <div
       className="modal-container"
-      style={{ visibility: `${props.isVisible ? "visible" : "hidden"}` }}
+      style={{ visibility: `${isVisible ? "visible" : "hidden"}` }}
+      tabIndex={0}
+      onKeyDown={toggleModal}
     >
-      <div onClick={props.toggleModal} className="modal-x">
+      <div 
+        onClick={toggleModal} 
+        className="modal-x" 
+        tabIndex={0} 
+        onKeyDown={toggleModal}>
         X
       </div>
-      <h2>FREQY Keyboard Navigation (Windows/Mac)</h2>
+      <h2>FREQY Keyboard Navigation</h2>
       <p>
         GLOBAL {">> "}
         To navigate forward, press TAB. To navigate backward, press SHIFT+TAB.
@@ -19,16 +27,16 @@ function InfoModal(props) {
       </p>
       <p>
         MODE {">> "}
-        Use Arrow-Up / Arrow-Down keys to select filter type.
+        Use ARROW ↑/↓ to select filter type.
       </p>
       <p>
         BUTTONS {">> "}
-        Press ENTER to play, stop, or loop uploaded audio.
+        Press ENTER to play, stop, or loop.
       </p>
       <p>
-        FREQUENCY {">> "}
-        Enter a value between 100 and 10K, or use Arrow-Up / Arrow-Down keys to
-        rotate cutoff knob. Press ENTER to reset.
+        CUTOFF {">> "}
+        Enter a value between 100 and 10K, or use ARROW ↑/↓ to
+        rotate knob. Press ENTER to reset.
       </p>
     </div>
   );
