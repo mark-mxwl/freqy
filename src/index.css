@@ -109,7 +109,7 @@ label {
   align-items: center;
   width: 90vw;
   max-width: 750px;
-  min-width: 350px;
+  min-width: 400px;
   margin: 20px auto 0px auto;
 }
 
@@ -135,7 +135,7 @@ label {
   align-items: center;
   width: 90vw;
   max-width: 750px;
-  min-width: 350px;
+  min-width: 400px;
   margin: 30px auto 0px auto;
 }
 
@@ -238,7 +238,7 @@ label {
   height: 100%;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  outline: 3px solid #4e5cb3;
+  box-shadow: 0 0 0 3px #4e5cb3;
   background-color: #4e5cb3;
   cursor: pointer;
 }

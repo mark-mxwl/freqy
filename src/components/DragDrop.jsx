@@ -9,7 +9,8 @@ function DragDrop(props) {
     setAudioFile(file);
     props.uploadedAudio(file);
   };
-
+  const [sizeErrorText, setSizeErrorText] = useState("")
+  const fileSizeTooBig = () => setSizeErrorText("File size exceeds 10MB!");
   const fileNameWithSpaces = audioFile?.name.split("_").join(" ");
 
   const styles = {
@@ -52,12 +53,15 @@ function DragDrop(props) {
                 <p>
                   {">>"} <b>Drop</b> or <u>select</u> audio // 10MB limit
                 </p>
+                <p>
+                  {sizeErrorText}
+                </p>
               </div>
             )
           }
           array={["wav", "aiff", "mp3"]}
           maxSize={10}
-          onSizeError={(file) => console.log(file)}
+          onSizeError={fileSizeTooBig}
         />
       </div>
     </>

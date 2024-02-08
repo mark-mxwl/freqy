@@ -36,9 +36,11 @@ const filterFreqRange = 10500;
 const midiCCRange = 128;
 const midiIncrement = (filterFreqRange / midiCCRange).toFixed(0);
 let midiToFreq = 5000;
-let midiDeviceName;
 
 let n = 0;
+
+let safariAgent = navigator.userAgent.indexOf("Safari") > -1; 
+let chromeAgent = navigator.userAgent.indexOf("Chrome") > -1;
 
 export default function App() {
   const [uploadedAudio, setUploadedAudio] = useState(null);
@@ -48,7 +50,7 @@ export default function App() {
   const [midiCC, setMidiCC] = useState(0);
   const [midiValue, setMidiValue] = useState(0);
   const [useMidi, setUseMidi] = useState(false);
-  const [toggleMidi, setToggleMidi] = useState(false);
+  const [midiDeviceName, setMidiDeviceName] = useState("");
 
   const [toggle, setToggle] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -60,7 +62,11 @@ export default function App() {
   filter.Q.value = filterTypes[n].q;
   filter.frequency.value = freq;
 
-  // CREATE AUDIO BUFFER
+  function discardDuplicateUserAgent() {
+    if ((chromeAgent) && (safariAgent)) safariAgent = false; 
+  }
+
+  // AUDIO BUFFER
   useEffect(() => {
     if (uploadedAudio) {
       reader1.readAsArrayBuffer(uploadedAudio);
@@ -74,7 +80,7 @@ export default function App() {
     }
   }, [uploadedAudio]);
 
-  // CREATE SOURCE NODE
+  // SOURCE NODE
   useEffect(() => {
     if (bufferReady === true) {
       const soundSource = ctx.createBufferSource();
@@ -90,29 +96,30 @@ export default function App() {
     }
   }, [toggle]);
 
-  // ACCESS MIDI
+  // MIDI ACCESS
   useEffect(() => {
-    navigator.requestMIDIAccess().then(
-      (access) => {
-        access.addEventListener("statechange", findMidiDevices);
-        const inputs = access.inputs;
-        inputs.forEach((input) => {
-          input.addEventListener("midimessage", handleMidiInput);
-        });
-      },
-      (fail) => {
-        console.log(`Could not connect to MIDI. Error: ${fail}`);
-      }
-    );
-  }, [toggleMidi]);
+    discardDuplicateUserAgent();
+    if(!safariAgent) {
+      navigator.requestMIDIAccess().then(
+        (access) => {
+          access.addEventListener("statechange", findMidiDevices);
+          const inputs = access.inputs;
+          inputs.forEach((input) => {
+            input.addEventListener("midimessage", handleMidiInput);
+          });
+        },
+        (fail) => {
+          console.log(`Could not connect to MIDI. Error: ${fail}`);
+        }
+      );
+    }
+  }, []);
 
   function findMidiDevices(e) {
-    if (e.port.connection === "closed") {
-      setToggleMidi(false);
-      midiDeviceName = "No Device Detected";
-    } else {
-      setToggleMidi(true);
-      midiDeviceName = e.port.name;
+    if (e.port.state === "disconnected") {
+      setMidiDeviceName("No device detected");
+    } else if (e.port.state === "connected") {
+      setMidiDeviceName(e.port.name);
     }
   }
 
@@ -342,7 +349,6 @@ export default function App() {
               alt="GitHub"
               title="GitHub"
               className="link-icons"
-              // tabIndex={0}
             />
           </a>
           <a href="https://markmaxwelldev.com" target="_blank">
@@ -351,7 +357,6 @@ export default function App() {
               alt="Website"
               title="Website"
               className="link-icons"
-              // tabIndex={0}
             />
           </a>
         </div>

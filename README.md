@@ -8,7 +8,7 @@
 
 ⚡️ Audio can be triggered as a one-shot or loop, and can be replaced at any time.
 
-🦾 Four filter modes: Classic (LP), DJ Booth (HP), Trip-Hop (BP), and Nu-Skool (Notch). 
+🦾 Four filter modes: Classic (LP), DJ Booth (HP), Trip-Hop (BP), and Nu-Skool (Notch).
 
 👾 Cutoff can be controlled with the main knob, frequency display, or via MIDI.
 
@@ -20,17 +20,30 @@
 
 ## Try It 🙌
 
-Freqy is live at (URL needed)
+📡 🌐 Freqy is live at (URL needed) 🌐 📡
+
+### Browser Compatibility
+
+🔈 Freqy's audio features are fully compatible with all major browers: Chrome, Safari, Firefox, etc.
+
+🎛 Firefox will request access to your MIDI devices. If your device fails to connect, try refreshing the page.
+
+> [!WARNING]
+> Safari does not support Web MIDI; features are disabled.
 
 ## Project Setup
 
-Clone the Freqy repository to your local machine.
+Clone the repository to your local machine.
 
 ```
 git clone https://github.com/mark-mxwl/freqy
 ```
 
 Navigate to the root directory and install dependencies.
+
+```
+cd ~/freqy
+```
 
 ```
 npm install
@@ -50,7 +63,7 @@ Ports, plugins, and other such things can be configured in `vite.config.js`.
 
 ## Contributing
 
-While I'm not currently accepting feature contributions for Freqy, you can still help out by opening an issue to report a bug or any other odd behavior. If there's an open issue you'd like to tackle, @ me in the comments. Thanks for getting involved 🚀
+If you'd like to lend your wizardry to Freqy, you can help the most by opening an issue to report a bug or any other odd behavior. If there's an open issue you'd like to tackle, @ me in the comments. Thanks for getting involved 🚀
 
->[!IMPORTANT]
-> If you do have a feature idea, fork or clone the repo and do your thing! 
+> [!IMPORTANT]
+> While I'm not currently accepting feature contributions, if you have an idea for one, fork or clone the repo and do your thing!
