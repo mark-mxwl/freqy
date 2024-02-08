@@ -20,7 +20,7 @@
 
 ## Try It 🙌
 
-🌐 Freqy is live at (URL needed) 🌐
+🌐 Freqy is [LIVE](https://freqy.netlify.app/) and ready for tweakage! 🌐
 
 ### Browser Compatibility
 
