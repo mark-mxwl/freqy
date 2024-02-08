@@ -16,15 +16,15 @@
 > All of Freqy's features are fully accessible with keyboard navigation.
 
 > [!TIP]
-> Connect a MIDI device to control Freqy via knobs, sliders, ribbons, etc.
+> Connect a MIDI device to control Freqy via knobs, sliders, note velocity, etc.
 
 ## Try It 🙌
 
-📡 🌐 Freqy is live at (URL needed) 🌐 📡
+🌐 Freqy is live at (URL needed) 🌐
 
 ### Browser Compatibility
 
-🔈 Freqy's audio features are fully compatible with all major browers: Chrome, Safari, Firefox, etc.
+🔈 Freqy's audio features are compatible with all major browers: Chrome, Safari, Firefox, etc.
 
 🎛 Firefox will request access to your MIDI devices. If your device fails to connect, try refreshing the page.
 
@@ -40,10 +40,6 @@ git clone https://github.com/mark-mxwl/freqy
 ```
 
 Navigate to the root directory and install dependencies.
-
-```
-cd ~/freqy
-```
 
 ```
 npm install
@@ -63,7 +59,7 @@ Ports, plugins, and other such things can be configured in `vite.config.js`.
 
 ## Contributing
 
-If you'd like to lend your wizardry to Freqy, you can help the most by opening an issue to report a bug or any other odd behavior. If there's an open issue you'd like to tackle, @ me in the comments. Thanks for getting involved 🚀
+If you'd like to lend some dev wizardry to Freqy, you can help out by opening an issue to report any bugs/odd behavior. If there's an open issue you'd like to tackle, @ me in the comments before you jump in. Thanks for getting involved! 🚀
 
 > [!IMPORTANT]
 > While I'm not currently accepting feature contributions, if you have an idea for one, fork or clone the repo and do your thing!

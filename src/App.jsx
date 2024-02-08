@@ -39,7 +39,7 @@ let midiToFreq = 5000;
 
 let n = 0;
 
-let safariAgent = navigator.userAgent.indexOf("Safari") > -1; 
+let safariAgent = navigator.userAgent.indexOf("Safari") > -1;
 let chromeAgent = navigator.userAgent.indexOf("Chrome") > -1;
 
 export default function App() {
@@ -63,7 +63,7 @@ export default function App() {
   filter.frequency.value = freq;
 
   function discardDuplicateUserAgent() {
-    if ((chromeAgent) && (safariAgent)) safariAgent = false; 
+    if (chromeAgent && safariAgent) safariAgent = false;
   }
 
   // AUDIO BUFFER
@@ -82,7 +82,7 @@ export default function App() {
 
   // SOURCE NODE
   useEffect(() => {
-    if (bufferReady === true) {
+    if (bufferReady) {
       const soundSource = ctx.createBufferSource();
       soundSource.buffer = currentBuffer;
       soundSource.connect(filter);
@@ -99,7 +99,7 @@ export default function App() {
   // MIDI ACCESS
   useEffect(() => {
     discardDuplicateUserAgent();
-    if(!safariAgent) {
+    if (!safariAgent) {
       navigator.requestMIDIAccess().then(
         (access) => {
           access.addEventListener("statechange", findMidiDevices);
@@ -179,7 +179,7 @@ export default function App() {
           style={{ border: !useMidi && "1px solid rgba(165, 165, 165, 0)" }}
         >
           <img
-            src="src/assets/icon/midi-port.svg"
+            src="icon/midi-port.svg"
             className="link-icons"
             alt="MIDI"
             title="MIDI"
@@ -199,13 +199,15 @@ export default function App() {
             }}
           />
           <p style={{ display: !useMidi && "none" }}>
-            {`MIDI: ${midiDeviceName} | CC#: ${midiCC} | Value: ${
-              midiValue === undefined ? 0 : midiValue
-            }`}
+            {safariAgent
+              ? "Safari does not support Web MIDI."
+              : `MIDI: ${midiDeviceName} | CC#: ${midiCC} | Value: ${
+                  midiValue === undefined ? 0 : midiValue
+                }`}
           </p>
         </div>
         <img
-          src="src/assets/icon/universal-access-solid.svg"
+          src="icon/universal-access-solid.svg"
           alt="Universal Access"
           title="Universal Access"
           className="link-icons"
@@ -242,7 +244,7 @@ export default function App() {
                   <label htmlFor="lp">Classic</label>
                   <div className="filter-icon-wrapper">
                     <img
-                      src="src/assets/icon/filter-lowpass.svg"
+                      src="icon/filter-lowpass.svg"
                       className="filter-icons"
                     />
                   </div>
@@ -258,7 +260,7 @@ export default function App() {
                   <label htmlFor="hp">DJ Booth</label>
                   <div className="filter-icon-wrapper">
                     <img
-                      src="src/assets/icon/filter-lowpass.svg"
+                      src="icon/filter-lowpass.svg"
                       className="filter-icons flip-hztl"
                     />
                   </div>
@@ -274,7 +276,7 @@ export default function App() {
                   <label htmlFor="bp">Trip-Hop</label>
                   <div className="filter-icon-wrapper">
                     <img
-                      src="src/assets/icon/filter-notch.svg"
+                      src="icon/filter-notch.svg"
                       className="filter-icons flip-vrtl"
                     />
                   </div>
@@ -290,7 +292,7 @@ export default function App() {
                   <label htmlFor="nc">Nu-Skool</label>
                   <div className="filter-icon-wrapper">
                     <img
-                      src="src/assets/icon/filter-notch.svg"
+                      src="icon/filter-notch.svg"
                       className="filter-icons"
                       style={{ marginRight: "7px" }}
                     />
@@ -301,7 +303,7 @@ export default function App() {
             <div className="plugin-control-bar-R">
               <div id="play-btn">
                 <img
-                  src="src/assets/icon/play-solid.svg"
+                  src="icon/play-solid.svg"
                   alt="Play"
                   title="Play"
                   id="play-1"
@@ -313,7 +315,7 @@ export default function App() {
               </div>
               <div id="stop-btn">
                 <img
-                  src="src/assets/icon/stop-solid.svg"
+                  src="icon/stop-solid.svg"
                   alt="Stop"
                   title="Stop"
                   id="stop-1"
@@ -325,7 +327,7 @@ export default function App() {
               </div>
               <div id="loop-btn">
                 <img
-                  src="src/assets/icon/repeat-solid.svg"
+                  src="icon/repeat-solid.svg"
                   alt="Loop"
                   title="Loop"
                   id="loop-1"
@@ -345,7 +347,7 @@ export default function App() {
         <div>
           <a href="https://github.com/mark-mxwl" target="_blank">
             <img
-              src="src/assets/icon/github.svg"
+              src="icon/github.svg"
               alt="GitHub"
               title="GitHub"
               className="link-icons"
@@ -353,7 +355,7 @@ export default function App() {
           </a>
           <a href="https://markmaxwelldev.com" target="_blank">
             <img
-              src="src/assets/icon/M_nav_icon_1.svg"
+              src="icon/M_nav_icon_1.svg"
               alt="Website"
               title="Website"
               className="link-icons"
