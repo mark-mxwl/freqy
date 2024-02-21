@@ -36,7 +36,7 @@
 Clone the repository to your local machine.
 
 ```
-git clone https://github.com/mark-mxwl/freqy
+git clone https://github.com/mark-mxwl/freqy.git
 ```
 
 Navigate to the root directory and install dependencies.
