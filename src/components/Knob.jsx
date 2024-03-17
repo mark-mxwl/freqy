@@ -118,17 +118,17 @@ export default function Knob(props) {
     <>
       <div className="wrapper">
         <div className="knob">
-          <div className="label label-l">100 Hz</div>
+          <div className="label label-l-freqy">100 Hz</div>
           <div className="knob_inner_shadow">
             <div
               ref={knobRef}
-              className="knob_inner"
+              className="knob_inner_freqy"
               title="Cutoff: double-click to reset!"
             >
-              <div ref={pointerRef} className="knob_inner_pointer"></div>
+              <div ref={pointerRef} className="knob_inner_pointer_freqy"></div>
             </div>
           </div>
-          <div className="label label-r">10 KHz</div>
+          <div className="label label-r-freqy">10 KHz</div>
         </div>
         <div
           title="Frequency: double-click to reset!"

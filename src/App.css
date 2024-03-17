@@ -1,68 +1,20 @@
-:root {
-  max-width: 100vw;
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.8em;
-  color: rgba(255, 255, 255, 0.8);
-  background-color: #242424;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* ----------------------
+  FREQY Stylesheet v1.1.0
+  ---------------------*/
 
-h1 {
-  font-family: "Monoton", sans-serif;
-  font-size: 2em;
-  color: #242424;
-  text-align: center;
-  margin: 8px 0 15px 0;
-}
-
-h2 {
-  line-height: 1.3em;
-}
-
-fieldset {
-  border: 1px solid #242424;
-  border-radius: 10px;
-  width: fit-content;
-  padding-right: 5px;
-  text-align: left;
-  line-height: 1.4em;
-  user-select: none;
-}
-
-input[type=radio] {
-  appearance: none;
-  padding: 5px;
-  background-color: rgb(205, 205, 205);
-  border-radius:50%;
-  margin-right: 8px;
-  cursor: pointer;
-}
-input[type=radio]:checked {
-  background-color: #ffd059;
-  box-shadow: 0 0 5px 2px #ffda7d;
-}
-
-label {
-  cursor: pointer;
-}
-
-.filter-icon-wrapper {
-  display: inline-block;
-  text-align: right;
-  width: 30px;
-}
 .filter-icons {
   width: 15px;
   height: 15px;
+  margin-bottom: -5px;
+  margin-left: 10px;
 }
+
 .flip-hztl {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   margin-right: 5px;
 }
+
 .flip-vrtl {
   -webkit-transform: scaleY(-1);
   transform: scaleY(-1);
@@ -73,9 +25,12 @@ label {
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
-  margin: 70px auto 0px auto;
+  margin: 125px auto 0px auto;
   padding: 0 15px 10px 15px;
   background-color: rgba(32, 32, 32, .9);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.5em;
   height: 70vh;
   width: 70vw;
@@ -88,6 +43,9 @@ label {
   filter: drop-shadow(0px 15px 7px rgba(27, 27, 27, .8));
   z-index: 1;
   visibility: visible;
+}
+.modal-container h2 {
+  line-height: 1.3em;
 }
 
 .modal-x {
@@ -110,7 +68,7 @@ label {
   width: 90vw;
   max-width: 750px;
   min-width: 400px;
-  margin: 20px auto 0px auto;
+  margin: 125px auto 0px auto;
 }
 
 .midi {
@@ -118,34 +76,24 @@ label {
   align-items: center;
   margin-left: 9px;
   padding: 4px 9px 4px 0px;
-  border: 1px solid rgba(165, 165, 165, .8);
+  border: 1px solid #242424;
   border-radius: 30px;
   width: 50%;
   min-width: 255px;
 }
 .midi p {
-  font-size: .95em;
   display: contents;
-  overflow-x: auto;
-}
-
-.copyright-and-links {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 90vw;
-  max-width: 750px;
-  min-width: 400px;
-  margin: 30px auto 0px auto;
+  /* text-wrap: nowrap; */
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.7em;
+  font-weight: 500;
+  /* overflow-x: hidden; */
 }
 
 .link-icons {
   width: 30px;
   height: 30px;
   margin: 0 9px 0 9px;
-  /*filter below matches color: #616161; */
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(271deg)
-    brightness(108%) contrast(102%);
   opacity: 0.8;
   transition: transform 0.2s;
 }
@@ -153,13 +101,9 @@ label {
   transform: scale(1.2);
 }
 
-/* -------------
-  Plugin Styles 
-  ------------*/
-
-.plugin-container {
+.plugin-container-freqy {
   background: linear-gradient(0.35turn, #3f87a6, #ebf8e1, #f69d3c);
-  margin: 20px auto 0px auto;
+  margin: 20px auto 110px auto;
   height: 580px;
   width: 90vw;
   max-width: 750px;
@@ -168,6 +112,13 @@ label {
   border: none;
   border-radius: 50px;
   filter: drop-shadow(0px 18px 9px rgb(27, 27, 27));
+}
+.plugin-container-freqy h1 {
+  font-family: "Monoton", sans-serif;
+  font-size: 1.7em;
+  color: #242424;
+  text-align: center;
+  margin: 0 0 15px 0;
 }
 
 .plugin-drag-drop {
@@ -184,12 +135,37 @@ label {
   max-width: "500px";
 }
 
-.plugin-control-bar-L {
+.plugin-control-bar-L-freqy {
   width: 40%;
   padding-left: 5px;
   font-family: "Bungee", sans-serif;
   font-size: 9px;
   color: #242424;
+}
+.plugin-control-bar-L-freqy fieldset {
+  border: 1px solid #242424;
+  border-radius: 10px;
+  width: 120px;
+  height: 105px;
+  padding-right: 5px;
+  text-align: left;
+  line-height: 1.4em;
+  user-select: none;
+}
+.plugin-control-bar-L-freqy input[type=radio] {
+  appearance: none;
+  padding: 5px;
+  background-color: rgb(205, 205, 205);
+  border-radius:50%;
+  margin-right: 8px;
+  cursor: pointer;
+}
+.plugin-control-bar-L-freqy input[type=radio]:checked {
+  background-color: #ffd059;
+  box-shadow: 0 0 5px 2px #ffda7d;
+}
+.plugin-control-bar-L-freqy label {
+  cursor: pointer;
 }
 
 .plugin-control-bar-R {
@@ -231,7 +207,7 @@ label {
   margin: auto;
 }
 
-.knob_inner {
+.knob_inner_freqy {
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -251,7 +227,7 @@ label {
   filter: drop-shadow(0px 12px 6px rgb(51, 51, 51));
 }
 
-.knob_inner_pointer {
+.knob_inner_pointer_freqy {
   position: absolute;
   width: 24px;
   height: 24px;
@@ -263,11 +239,11 @@ label {
   box-shadow: 0px 0px 2px inset;
 }
 
-.label-l {
+.label-l-freqy {
   left: -40%;
 }
 
-.label-r {
+.label-r-freqy {
   right: -40%;
 }
 
@@ -282,7 +258,7 @@ label {
 
 .current-value {
   position: relative;
-  top: 60px;
+  top: 40px;
   width: 125px;
   border-radius: 13px;
   margin: auto;

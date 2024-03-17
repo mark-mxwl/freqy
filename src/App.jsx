@@ -1,7 +1,9 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import Knob from "./components/Knob.jsx";
 import DragDrop from "./components/DragDrop.jsx";
 import InfoModal from "./components/InfoModal.jsx";
+import "./App.css"
 
 const ctx = new AudioContext();
 const reader1 = new FileReader();
@@ -37,8 +39,6 @@ const midiCCRange = 128;
 const midiIncrement = (filterFreqRange / midiCCRange).toFixed(0);
 let midiToFreq = 5000;
 
-let n = 0;
-
 let safariAgent = navigator.userAgent.indexOf("Safari") > -1;
 let chromeAgent = navigator.userAgent.indexOf("Chrome") > -1;
 
@@ -55,8 +55,10 @@ export default function App() {
   const [toggle, setToggle] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
+  const [n, setN] = useState(0);
+
   const handleModal = () => setIsVisible(true);
-  const handleClick = (e) => (n = e.target.value);
+  const handleClick = (e) => setN(e.target.value);
 
   filter.type = filterTypes[n].type;
   filter.Q.value = filterTypes[n].q;
@@ -179,7 +181,7 @@ export default function App() {
           style={{ border: !useMidi && "1px solid rgba(165, 165, 165, 0)" }}
         >
           <img
-            src="icon/midi-port.svg"
+            src="icons/midi-port.svg"
             className="link-icons"
             alt="MIDI"
             title="MIDI"
@@ -207,7 +209,7 @@ export default function App() {
           </p>
         </div>
         <img
-          src="icon/universal-access-solid.svg"
+          src="icons/universal-access-solid.svg"
           alt="Universal Access"
           title="Universal Access"
           className="link-icons"
@@ -224,15 +226,15 @@ export default function App() {
           style={{ cursor: "pointer" }}
         />
       </div>
-      <div className="plugin-container">
+      <div className="plugin-container-freqy">
         <h1>FREQY</h1>
         <DragDrop uploadedAudio={setUploadedAudio} />
         <div className="plugin-drag-drop" style={{ marginTop: "25px" }}>
           <div className="plugin-control-bar">
-            <div className="plugin-control-bar-L">
+            <div className="plugin-control-bar-L-freqy">
               <fieldset>
                 <legend>Mode {">>"}</legend>
-                <div title="Lowpass filter">
+                <div title="Lowpass filter" style={{marginBottom: "3px"}}>
                   <input
                     type="radio"
                     id="lp"
@@ -242,14 +244,13 @@ export default function App() {
                     defaultChecked
                   />
                   <label htmlFor="lp">Classic</label>
-                  <div className="filter-icon-wrapper">
-                    <img
-                      src="icon/filter-lowpass.svg"
-                      className="filter-icons"
-                    />
-                  </div>
+                  <img
+                    src="icons/filter-lowpass.svg"
+                    className="filter-icons"
+                    style={{marginLeft: "14px"}}
+                  />
                 </div>
-                <div title="Highpass filter">
+                <div title="Highpass filter" style={{marginBottom: "3px"}}>
                   <input
                     type="radio"
                     id="hp"
@@ -258,14 +259,12 @@ export default function App() {
                     onClick={handleClick}
                   />
                   <label htmlFor="hp">DJ Booth</label>
-                  <div className="filter-icon-wrapper">
-                    <img
-                      src="icon/filter-lowpass.svg"
-                      className="filter-icons flip-hztl"
-                    />
-                  </div>
+                  <img
+                    src="icons/filter-lowpass.svg"
+                    className="filter-icons flip-hztl"
+                  />
                 </div>
-                <div title="Bandpass filter">
+                <div title="Bandpass filter" style={{marginBottom: "3px"}}>
                   <input
                     type="radio"
                     id="bp"
@@ -274,12 +273,10 @@ export default function App() {
                     onClick={handleClick}
                   />
                   <label htmlFor="bp">Trip-Hop</label>
-                  <div className="filter-icon-wrapper">
-                    <img
-                      src="icon/filter-notch.svg"
-                      className="filter-icons flip-vrtl"
-                    />
-                  </div>
+                  <img
+                    src="icons/filter-notch.svg"
+                    className="filter-icons flip-vrtl"
+                  />
                 </div>
                 <div title="Notch filter">
                   <input
@@ -290,20 +287,18 @@ export default function App() {
                     onClick={handleClick}
                   />
                   <label htmlFor="nc">Nu-Skool</label>
-                  <div className="filter-icon-wrapper">
-                    <img
-                      src="icon/filter-notch.svg"
-                      className="filter-icons"
-                      style={{ marginRight: "7px" }}
-                    />
-                  </div>
+                  <img
+                    src="icons/filter-notch.svg"
+                    className="filter-icons"
+                    style={{marginLeft: "9px"}}
+                  />
                 </div>
               </fieldset>
             </div>
             <div className="plugin-control-bar-R">
               <div id="play-btn">
                 <img
-                  src="icon/play-solid.svg"
+                  src="icons/play-solid.svg"
                   alt="Play"
                   title="Play"
                   id="play-1"
@@ -315,7 +310,7 @@ export default function App() {
               </div>
               <div id="stop-btn">
                 <img
-                  src="icon/stop-solid.svg"
+                  src="icons/stop-solid.svg"
                   alt="Stop"
                   title="Stop"
                   id="stop-1"
@@ -327,7 +322,7 @@ export default function App() {
               </div>
               <div id="loop-btn">
                 <img
-                  src="icon/repeat-solid.svg"
+                  src="icons/repeat-solid.svg"
                   alt="Loop"
                   title="Loop"
                   id="loop-1"
@@ -341,27 +336,6 @@ export default function App() {
           </div>
         </div>
         <Knob setFiltFreq={setFreq} midiFreq={midiToFreq} />
-      </div>
-      <div className="copyright-and-links">
-        <p style={{ marginLeft: "9px" }}>MIT 2024 © Mark Maxwell</p>
-        <div>
-          <a href="https://github.com/mark-mxwl" target="_blank">
-            <img
-              src="icon/github.svg"
-              alt="GitHub"
-              title="GitHub"
-              className="link-icons"
-            />
-          </a>
-          <a href="https://markmaxwelldev.com" target="_blank">
-            <img
-              src="icon/M_nav_icon_1.svg"
-              alt="Website"
-              title="Website"
-              className="link-icons"
-            />
-          </a>
-        </div>
       </div>
     </>
   );

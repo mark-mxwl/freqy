@@ -13,21 +13,26 @@ function DragDrop(props) {
   const fileSizeTooBig = () => setSizeErrorText("File size exceeds 10MB!");
   const fileNameWithSpaces = audioFile?.name.split("_").join(" ");
 
-  const styles = {
+  const dStyles = {
     width: "60vw",
-    minWidth: "275px",
+    minWidth: "285px",
     maxWidth: "500px",
-    height: "75px",
+    height: "90px",
     margin: "-5px auto 0 auto",
     padding: ".01em 15px 1rem 15px",
     border: "none",
     borderRadius: "20px",
     backgroundColor: "#242424",
-    color: "rgba(255, 255, 255, 0.9)",
-    font: ".95rem Inconsolata, monospace",
+    textAlign: "left",
     cursor: "pointer",
     userSelect: "none",
   };
+
+  const pStyles = {
+    font: ".8rem Inconsolata, monospace",
+    color: "rgba(255, 255, 255, .9)",
+    margin: "10px 0 0 0",
+  }
 
   return (
     <>
@@ -40,20 +45,20 @@ function DragDrop(props) {
           label="Drop or select audio!"
           children={
             audioFile ? (
-              <div style={styles}>
-                <p>
+              <div style={dStyles}>
+                <p style={pStyles}>
                   <b>{fileNameWithSpaces}</b> uploaded successfully!
                 </p>
-                <p>
+                <p style={pStyles}>
                   {">>"} Drop or <u>select</u> audio to replace!
                 </p>
               </div>
             ) : (
-              <div style={styles}>
-                <p>
+              <div style={dStyles}>
+                <p style={pStyles}>
                   {">>"} <b>Drop</b> or <u>select</u> audio // 10MB limit
                 </p>
-                <p>
+                <p style={pStyles}>
                   {sizeErrorText}
                 </p>
               </div>
