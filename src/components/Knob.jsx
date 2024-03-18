@@ -99,17 +99,19 @@ export default function Knob(props) {
       setKeyInput("");
     });
 
-    currentValueRef.current.addEventListener("dblclick", (e) => {
-      knobRef.current.style.transform = "rotate(0deg)";
-      currentValueRef.current.innerHTML = "5000Hz";
-      setKeyInput("");
-    });
+    ["dblclick", "keydown"].forEach((e) =>
+      currentValueRef.current.addEventListener(e, (e) => {
+        if (e.key === "Enter" || e.type === "dblclick") {
+          knobRef.current.style.transform = "rotate(0deg)";
+          currentValueRef.current.innerHTML = "5000Hz";
+          setKeyInput("");
+        }
+      })
+    );
 
     currentValueRef.current.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        knobRef.current.style.transform = "rotate(0deg)";
-        currentValueRef.current.innerHTML = "5000Hz";
-        setKeyInput("");
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
       }
     });
   }
