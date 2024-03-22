@@ -125,7 +125,7 @@ export default function Knob(props) {
             <div
               ref={knobRef}
               className="knob_inner_freqy"
-              title="Cutoff: double-click to reset!"
+              title="Cutoff: double-click to reset! (MIDI CC# ANY)"
             >
               <div ref={pointerRef} className="knob_inner_pointer_freqy"></div>
             </div>

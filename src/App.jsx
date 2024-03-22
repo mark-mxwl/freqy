@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Knob from "./components/Knob.jsx";
 import DragDrop from "./components/DragDrop.jsx";
 import InfoModal from "./components/InfoModal.jsx";
-import "./App.css"
+import "./App.css";
 
 const ctx = new AudioContext();
 const reader1 = new FileReader();
@@ -126,9 +126,23 @@ export default function App() {
   }
 
   function handleMidiInput(e) {
+    let buttons = false;
+    // MIDI note CC: 48 (PLAY), 49 (STOP), 50 (LOOP)
+    if (e.data[1] === 48 && e.data[2] >= 1) {
+      playSample();
+      buttons = true;
+    }
+    if (e.data[1] === 49 && e.data[2] >= 1) {
+      stopSample();
+      buttons = true;
+    }
+    if (e.data[1] === 50 && e.data[2] >= 1) {
+      loopSample();
+      buttons = true;
+    }
     setMidiCC(e.data[1]);
-    setMidiValue(e.data[2]);
-    midiToFreq = e.data[2] * midiIncrement;
+    !buttons && setMidiValue(e.data[2]);
+    !buttons && (midiToFreq = e.data[2] * midiIncrement);
   }
 
   function handleMidiClick() {
@@ -234,7 +248,7 @@ export default function App() {
             <div className="plugin-control-bar-L-freqy">
               <fieldset>
                 <legend>Mode {">>"}</legend>
-                <div title="Lowpass filter" style={{marginBottom: "3px"}}>
+                <div title="Lowpass filter" style={{ marginBottom: "3px" }}>
                   <input
                     type="radio"
                     id="lp"
@@ -247,10 +261,10 @@ export default function App() {
                   <img
                     src="icons/filter-lowpass.svg"
                     className="filter-icons"
-                    style={{marginLeft: "14px"}}
+                    style={{ marginLeft: "14px" }}
                   />
                 </div>
-                <div title="Highpass filter" style={{marginBottom: "3px"}}>
+                <div title="Highpass filter" style={{ marginBottom: "3px" }}>
                   <input
                     type="radio"
                     id="hp"
@@ -264,7 +278,7 @@ export default function App() {
                     className="filter-icons flip-hztl"
                   />
                 </div>
-                <div title="Bandpass filter" style={{marginBottom: "3px"}}>
+                <div title="Bandpass filter" style={{ marginBottom: "3px" }}>
                   <input
                     type="radio"
                     id="bp"
@@ -290,7 +304,7 @@ export default function App() {
                   <img
                     src="icons/filter-notch.svg"
                     className="filter-icons"
-                    style={{marginLeft: "9px"}}
+                    style={{ marginLeft: "9px" }}
                   />
                 </div>
               </fieldset>
@@ -300,7 +314,7 @@ export default function App() {
                 <img
                   src="icons/play-solid.svg"
                   alt="Play"
-                  title="Play"
+                  title="Play (MIDI CC# 48)"
                   id="play-1"
                   className="plugin-control-buttons"
                   onClick={playSample}
@@ -312,7 +326,7 @@ export default function App() {
                 <img
                   src="icons/stop-solid.svg"
                   alt="Stop"
-                  title="Stop"
+                  title="Stop (MIDI CC# 49)"
                   id="stop-1"
                   className="plugin-control-buttons"
                   onClick={stopSample}
@@ -324,7 +338,7 @@ export default function App() {
                 <img
                   src="icons/repeat-solid.svg"
                   alt="Loop"
-                  title="Loop"
+                  title="Loop (MIDI CC# 50)"
                   id="loop-1"
                   className="plugin-control-buttons"
                   onClick={loopSample}
