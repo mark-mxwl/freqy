@@ -43,7 +43,6 @@ export default function Knob(props) {
   }, [keyInput]);
 
   function handleKeyInput(e) {
-    
     // For typed values
     const isNumber = isFinite(e.key);
     if (isNumber) {
@@ -57,7 +56,7 @@ export default function Knob(props) {
     }
     if (e.key === "ArrowDown") {
       setKeyInput((prev) => Number(prev - arrowIncrement));
-    } 
+    }
   }
 
   function freqClamp(value, max, min) {
@@ -67,14 +66,16 @@ export default function Knob(props) {
   }
 
   function mountKnob() {
-    ["mousedown", "touchstart"].forEach((e) => 
+    ["mousedown", "touchstart"].forEach((e) =>
       knobRef.current.addEventListener(e, (e) => {
-        center = e.pageY;
+        e.preventDefault();
+        e.type === "mousedown" && (center = e.pageY);
+        e.type === "touchstart" && (center = e.changedTouches[0].screenY);
         mouseIsDown = true;
       })
     );
 
-    ["mouseup", "touchend"].forEach((e) => 
+    ["mouseup", "touchend"].forEach((e) =>
       document.body.addEventListener(e, (e) => {
         mouseIsDown = false;
       })
@@ -86,18 +87,26 @@ export default function Knob(props) {
       }
     });
 
-    ["mousemove", "touchmove"].forEach((e) =>
-      document.body.addEventListener(e, (e) => {
-        mouseIsMoving = true;
-        if (mouseIsDown && mouseIsMoving) {
-          distance = freqClamp((center - e.pageY) * 38, 5000, -4900);
-          knobRef.current.style.transform =
-            "rotate(" + distance / 32 + "deg)";
-          currentValueRef.current.innerHTML = distance + 5000 + "Hz";
-          setFiltFreq(distance + 5000);
-        }
-      })
-    );
+    document.body.addEventListener("touchmove", (e) => {
+      mouseIsMoving = true;
+      if (mouseIsDown && mouseIsMoving) {
+        distance = freqClamp(
+          (center - e.changedTouches[0].screenY) * 38, 5000, -4900);
+        knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
+        currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+        setFiltFreq(distance + 5000);
+      }
+    });
+
+    document.body.addEventListener("mousemove", (e) => {
+      mouseIsMoving = true;
+      if (mouseIsDown && mouseIsMoving) {
+        distance = freqClamp((center - e.pageY) * 38, 5000, -4900);
+        knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
+        currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+        setFiltFreq(distance + 5000);
+      }
+    });
 
     knobRef.current.addEventListener("dblclick", (e) => {
       knobRef.current.style.transform = "rotate(0deg)";
