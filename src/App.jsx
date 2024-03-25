@@ -8,24 +8,6 @@ import "./App.css";
 const ctx = new AudioContext();
 const reader1 = new FileReader();
 const filter = ctx.createBiquadFilter();
-const filterTypes = [
-  {
-    type: "lowpass",
-    q: 4,
-  },
-  {
-    type: "highpass",
-    q: 4,
-  },
-  {
-    type: "bandpass",
-    q: 0.7,
-  },
-  {
-    type: "notch",
-    q: 0.7,
-  },
-];
 filter.connect(ctx.destination);
 
 let currentBuffer;
@@ -58,6 +40,25 @@ export default function App() {
 
   const handleModal = () => setIsVisible(true);
   const handleClick = (e) => setN(e.target.value);
+
+  const filterTypes = [
+    {
+      type: "lowpass",
+      q: 4,
+    },
+    {
+      type: "highpass",
+      q: 4,
+    },
+    {
+      type: "bandpass",
+      q: 0.7,
+    },
+    {
+      type: "notch",
+      q: 0.7,
+    },
+  ];
 
   filter.type = filterTypes[n].type;
   filter.Q.value = filterTypes[n].q;

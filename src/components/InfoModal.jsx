@@ -23,7 +23,7 @@ function InfoModal(props) {
       </p>
       <p>
         FILE SELECTOR {">> "}
-        Press any key to select an audio file from your device.
+        Press SPACEBAR or ENTER to select an audio file from your device.
       </p>
       <p>
         MODE {">> "}
