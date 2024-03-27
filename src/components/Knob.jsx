@@ -1,14 +1,14 @@
 import { useRef, useState, useEffect } from "react";
 
 export default function Knob(props) {
+  const { setFiltFreq, midiFreq } = props;
+  
   const componentIsMounted = useRef(false);
 
   const knobRef = useRef();
   const pointerRef = useRef();
-  const currentValueRef = useRef();
+  const currentValueRef = useRef(5000);
   const [keyInput, setKeyInput] = useState("");
-
-  const { setFiltFreq, midiFreq } = props;
 
   let center = 0;
   let distance;
@@ -29,7 +29,7 @@ export default function Knob(props) {
       distance = freqClamp(midiFreq - 5000, 5000, -4900);
       setFiltFreq(distance + 5000);
       knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
-      currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+      currentValueRef.current = distance + 5000;
     }
   }, [midiFreq]);
 
@@ -38,7 +38,7 @@ export default function Knob(props) {
       distance = freqClamp(keyInput - 5000, 5000, -4900);
       setFiltFreq(distance + 5000);
       knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
-      currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+      currentValueRef.current = distance + 5000;
     }
   }, [keyInput]);
 
@@ -93,7 +93,7 @@ export default function Knob(props) {
         distance = freqClamp(
           (center - e.changedTouches[0].screenY) * 38, 5000, -4900);
         knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
-        currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+        currentValueRef.current = distance + 5000;
         setFiltFreq(distance + 5000);
       }
     });
@@ -103,14 +103,15 @@ export default function Knob(props) {
       if (mouseIsDown && mouseIsMoving) {
         distance = freqClamp((center - e.pageY) * 38, 5000, -4900);
         knobRef.current.style.transform = "rotate(" + distance / 32 + "deg)";
-        currentValueRef.current.innerHTML = distance + 5000 + "Hz";
+        currentValueRef.current = distance + 5000;
         setFiltFreq(distance + 5000);
       }
     });
 
     knobRef.current.addEventListener("dblclick", (e) => {
       knobRef.current.style.transform = "rotate(0deg)";
-      currentValueRef.current.innerHTML = "5000Hz";
+      currentValueRef.current = 5000;
+      setFiltFreq(5000);
       setKeyInput("");
     });
 
@@ -118,7 +119,8 @@ export default function Knob(props) {
       currentValueRef.current.addEventListener(e, (e) => {
         if (e.key === "Enter" || e.type === "dblclick") {
           knobRef.current.style.transform = "rotate(0deg)";
-          currentValueRef.current.innerHTML = "5000Hz";
+          currentValueRef.current = 5000;
+          setFiltFreq(5000);
           setKeyInput("");
         }
       })
@@ -154,7 +156,11 @@ export default function Knob(props) {
           tabIndex={0}
           onKeyDown={handleKeyInput}
         >
-          {keyInput ? `${freqClamp(keyInput, 10000, 100)}Hz` : "5000Hz"}
+          <div>
+            {keyInput
+              ? `${freqClamp(keyInput, 10000, 100).toFixed(0)}Hz`
+              : `${currentValueRef.current.toFixed(0)}Hz`}
+          </div>
         </div>
       </div>
     </>

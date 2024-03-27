@@ -32,11 +32,11 @@
   font-size: 0.8em;
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.5em;
-  height: 70vh;
+  height: fit-content;
   width: 70vw;
   max-width: 600px;
   min-width: 300px;
-  max-height: 500px;
+  max-height: 600px;
   min-height: 380px;
   border: none;
   border-radius: 25px;
